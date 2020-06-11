@@ -2,3 +2,15 @@
 .idea/
 
 usr/sim/mpsoc_sim/mpsoc_sim
+
+*.o
+
+*.bin
+
+*.elf
+
+*.sec
+
+*.lst
+
+*.cnt
