@@ -1,0 +1,61 @@
+*  Copyright (C) 1991--94 Wickerhauser Consulting.  All Rights Reserved.
+*  May be freely copied for personal, noncommercial use by owners of 
+*  ``Adapted Wavelet Analysis from Theory to Software'' ISBN 1-56881-041-5
+*  by Mladen Victor Wickerhauser [AK Peters, Ltd., Wellesley, Mass., 1994]
+
+
+    ``Adapted Wavelet Analysis from Theory to Software''
+    =====================================================
+
+* Recursive listing of folders and source files
+
+   This is an index of the contents of the folders on
+   the diskette.  The folder name is followed by a list
+   of the Standard C source files it contains.
+
+Folders:
+--------
+chap02/	chap04/	chap06/	chap08/	chap10/	index
+chap03/	chap05/	chap07/	chap09/	files
+
+chap02:
+-------
+abt.h		common.h	fntype.h	interval.c	tfa.h
+btn.c		complex.h	hedge.c		interval.h	utility.c
+btn.h		fntype.c	hedge.h		real.h		utility.h
+
+chap03:
+-------
+bitrev.c	dtts.c		fft.c		hartley.c
+bitrev.h	dtts.h		fft.h		hartley.h
+
+chap04:
+-------
+altt1.c	altt1.h	fold.c	fold.h	ltt1.c	ltt1.h	rcf.c	rcf.h
+
+chap05:
+-------
+asbqfs.h	cd.h		qf.c
+cd.c		oqfs.h		qf.h
+
+chap06:
+-------
+dwt.c	dwt.h
+
+chap07:
+-------
+dwpa.c	dwpa.h
+
+chap08:
+-------
+getbasis.c	getbasis.h	infocost.c	infocost.h
+
+chap09:
+-------
+cdp2d.c		fold2.h		wtensor.c	xp.h
+cdp2d.h		wpt2.c		wtensor.h	zigzag.h
+fold2.c		wpt2.h		xp.c
+
+chap10:
+-------
+epsfns.c	epsfns.h	hardcopy.c	hardcopy.h

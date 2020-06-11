@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html dir="ltr" class="client-js" lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Cooley-Tukey FFT algorithm (C) - LiteratePrograms</title>
+<meta charset="UTF-8">
+<meta name="generator" content="MediaWiki 1.21.1">
+<link rel="alternate" type="application/x-wiki" title="Edit" href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;action=edit">
+<link rel="edit" title="Edit" href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;action=edit">
+<link rel="shortcut icon" href="http://en.literateprograms.org/favicon.ico">
+<link rel="search" type="application/opensearchdescription+xml" href="http://en.literateprograms.org/opensearch_desc.php" title="LiteratePrograms (en)">
+<link rel="EditURI" type="application/rsd+xml" href="http://en.literateprograms.org/api.php?action=rsd">
+<link rel="copyright" href="http://en.literateprograms.org/LiteratePrograms:Copyrights">
+<link rel="alternate" type="application/atom+xml" title="LiteratePrograms Atom feed" href="http://en.literateprograms.org/index.php?title=Special:RecentChanges&amp;feed=atom">
+<link rel="stylesheet" href="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/load.css">
+<style>
+.mw-collapsible-toggle{float:right} li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
+/* cache key: moonflar_literateprogramsdb:resourceloader:filter:minify-css:7:4250852ed2349a0d4d0fc6509a3e7d4c */
+.suggestions{overflow:hidden;position:absolute;top:0;left:0;width:0;border:none;z-index:1099;padding:0;margin:-1px -1px 0 0} html > body .suggestions{margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left}.suggestions-result-current{background-color:#4C59A6;color:white}.suggestions-special .special-label{color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white}.autoellipsis-matched,.highlight{font-weight:bold}
+/* cache key: moonflar_literateprogramsdb:resourceloader:filter:minify-css:7:9780324491b653a3780e2d029bdc140c */</style><style>
+.suggestions a.mw-searchSuggest-link,.suggestions a.mw-searchSuggest-link:hover,.suggestions a.mw-searchSuggest-link:active,.suggestions a.mw-searchSuggest-link:focus{text-decoration:none;color:black}.suggestions-result-current a.mw-searchSuggest-link,.suggestions-result-current a.mw-searchSuggest-link:hover,.suggestions-result-current a.mw-searchSuggest-link:active,.suggestions-result-current a.mw-searchSuggest-link:focus{color:white}
+/* cache key: moonflar_literateprogramsdb:resourceloader:filter:minify-css:7:52b1797f70c7e4094dfa4191101944e8 */</style><meta name="ResourceLoaderDynamicStyles" content="">
+<link rel="stylesheet" href="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/load_002.css">
+<style>a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}
+/* cache key: moonflar_literateprogramsdb:resourceloader:filter:minify-css:7:76cbac64706e93e38506be284c747de0 */</style>
+
+<script src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/load.php"></script><script src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/load_004.php"></script>
+<script>if(window.mw){
+mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"Cooley-Tukey_FFT_algorithm_(C)","wgTitle":"Cooley-Tukey FFT algorithm (C)","wgCurRevisionId":19032,"wgArticleId":2763,"wgIsArticle":true,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["Developing","Fast fourier transform","Cooley-Tukey FFT algorithm","Programming language:C","Environment:Portable"],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"Cooley-Tukey_FFT_algorithm_(C)","wgRestrictionEdit":[],"wgRestrictionMove":[]});
+}</script><script>if(window.mw){
+mw.loader.implement("user.options",function(){mw.user.options.set({"ccmeonemails":0,"cols":80,"date":"default","diffonly":0,"disablemail":0,"disablesuggest":0,"editfont":"default","editondblclick":0,"editsection":1,"editsectiononrightclick":0,"enotifminoredits":0,"enotifrevealaddr":0,"enotifusertalkpages":1,"enotifwatchlistpages":0,"extendwatchlist":0,"externaldiff":0,"externaleditor":0,"fancysig":0,"forceeditsummary":0,"gender":"unknown","hideminor":0,"hidepatrolled":0,"imagesize":2,"justify":0,"math":1,"minordefault":0,"newpageshidepatrolled":0,"nocache":0,"noconvertlink":0,"norollbackdiff":0,"numberheadings":0,"previewonfirst":0,"previewontop":1,"quickbar":5,"rcdays":7,"rclimit":50,"rememberpassword":0,"rows":25,"searchlimit":20,"showhiddencats":0,"showjumplinks":1,"shownumberswatching":1,"showtoc":1,"showtoolbar":1,"skin":"vector","stubthreshold":0,"thumbsize":2,"underline":2,"uselivepreview":0,"usenewrc":0,"watchcreations":0,"watchdefault":0,"watchdeletion":0,"watchlistdays":3,
+"watchlisthideanons":0,"watchlisthidebots":0,"watchlisthideliu":0,"watchlisthideminor":0,"watchlisthideown":0,"watchlisthidepatrolled":0,"watchmoves":0,"wllimit":250,"variant":"en","language":"en","searchNs0":true,"searchNs1":false,"searchNs2":false,"searchNs3":false,"searchNs4":false,"searchNs5":false,"searchNs6":false,"searchNs7":false,"searchNs8":false,"searchNs9":false,"searchNs10":false,"searchNs11":false,"searchNs12":false,"searchNs13":false,"searchNs14":false,"searchNs15":false});;},{},{});mw.loader.implement("user.tokens",function(){mw.user.tokens.set({"editToken":"+\\","patrolToken":false,"watchToken":false});;},{},{});
+/* cache key: moonflar_literateprogramsdb:resourceloader:filter:minify-js:7:5e9d6f662546365d82558dd92b2a2224 */
+}</script>
+<script>if(window.mw){
+mw.loader.load(["mediawiki.page.startup","mediawiki.legacy.wikibits","mediawiki.legacy.ajax"]);
+}</script><script src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/load_005.php"></script>
+<!--[if lt IE 7]><style type="text/css">body{behavior:url("/skins/vector/csshover.min.htc")}</style><![endif]--><script src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/load_002.php" async=""></script></head>
+<body class="mediawiki ltr sitedir-ltr ns-0 ns-subject page-Cooley-Tukey_FFT_algorithm_C skin-vector action-view vector-animateLayout">
+		<div id="mw-page-base" class="noprint"></div>
+		<div id="mw-head-base" class="noprint"></div>
+		<!-- content -->
+		<div id="content" class="mw-body" role="main">
+			<a id="top"></a>
+			<div id="mw-js-message" style="display:none;"></div>
+						<!-- firstHeading -->
+			<h1 id="firstHeading" class="firstHeading" lang="en"><span dir="auto">Cooley-Tukey FFT algorithm (C)</span></h1>
+			<!-- /firstHeading -->
+			<!-- bodyContent -->
+			<div id="bodyContent">
+								<!-- tagline -->
+				<div id="siteSub">From LiteratePrograms</div>
+				<!-- /tagline -->
+								<!-- subtitle -->
+				<div id="contentSub"></div>
+				<!-- /subtitle -->
+																<!-- jumpto -->
+				<div id="jump-to-nav" class="mw-jump">
+					Jump to:					<a href="#mw-navigation">navigation</a>, 					<a href="#p-search">search</a>
+				</div>
+				<!-- /jumpto -->
+								<!-- bodycontent -->
+				<div id="mw-content-text" dir="ltr" class="mw-content-ltr" lang="en"><div style="text-align: center; border: 3px solid #E3AC43; padding:2px; margin: 0 auto;">
+<p><big><b>This program is under <i>development</i>.</b></big><br>
+Please help to <b><a class="external text" href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;action=edit">debug it</a></b>. When debugging<br>
+is complete, <a class="external text" href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;action=edit">remove</a> the {{develop}} tag.
+</p>
+</div>
+<p><br>
+The <a class="external text" href="http://en.wikipedia.org/wiki/Cooley-Tukey_FFT_algorithm">Cooley-Tukey FFT algorithm</a>
+ is a popular fast Fourier transform algorithm for rapidly computing the
+ discrete fourier transform of a sampled digital signal. It applies best
+ to signal vectors whose lengths are highly composite, usually a power 
+of 2.
+</p><p>Here we describe a C implementation of Cooley-Tukey. We begin 
+with a straightforward implementation and then describe various 
+performance improvements. Like most practical implementations, we will 
+concentrate on the case where the vector length is a power of 2.
+</p>
+<table id="toc" class="toc"><tbody><tr><td><div id="toctitle"><h2>Contents</h2><span class="toctoggle">&nbsp;[<a href="#" class="internal" id="togglelink">hide</a>]&nbsp;</span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Complex_arithmetic"><span class="tocnumber">1</span> <span class="toctext">Complex arithmetic</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Na.C3.AFve_evaluation_of_definition"><span class="tocnumber">2</span> <span class="toctext">Naïve evaluation of definition</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Radix-2_decimation_in_time"><span class="tocnumber">3</span> <span class="toctext">Radix-2 decimation in time</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Files"><span class="tocnumber">4</span> <span class="toctext">Files</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Test_driver"><span class="tocnumber">5</span> <span class="toctext">Test driver</span></a></li>
+</ul>
+</td></tr></tbody></table>
+<h2><span class="editsection">[<a href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;action=edit&amp;section=1" title="Edit section: Complex arithmetic">edit</a>]</span> <span class="mw-headline" id="Complex_arithmetic"> Complex arithmetic </span></h2>
+<p>Although the newest version of C, C99, has library support for 
+complex number datatypes and arithmetic, it is not widely supported. We 
+write simple implementations of a few basic operations we need here, 
+with little explanation; for a more detailed discussion, see <a href="http://en.literateprograms.org/Category:Complex_numbers" title="Category:Complex numbers">Category:Complex numbers</a>.
+</p>
+<pre><font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:complex number datatype" href="#chunk%20use:complex%20number%20datatype">complex number datatype</a>&gt;&gt;=</b></font>
+<strong>typedef</strong> <strong>struct</strong> <font color="#2040a0">complex_t</font> <font color="#4444FF"><strong>{</strong></font>
+    <strong>double</strong> <font color="#2040a0">re</font><font color="#4444FF">;</font>
+    <strong>double</strong> <font color="#2040a0">im</font><font color="#4444FF">;</font>
+<font color="#4444FF"><strong>}</strong></font> <font color="#2040a0">complex</font><font color="#4444FF">;</font>
+
+<font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:complex number prototypes" href="#chunk%20use:complex%20number%20prototypes">complex number prototypes</a>&gt;&gt;=</b></font>
+<font color="#2040a0">complex</font> <font color="#2040a0">complex_from_polar</font><font color="#4444FF">(</font><strong>double</strong> <font color="#2040a0">r</font>, <strong>double</strong> <font color="#2040a0">theta_radians</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+<strong>double</strong>  <font color="#2040a0">complex_magnitude</font><font color="#4444FF">(</font><font color="#2040a0">complex</font> <font color="#2040a0">c</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+<font color="#2040a0">complex</font> <font color="#2040a0">complex_add</font><font color="#4444FF">(</font><font color="#2040a0">complex</font> <font color="#2040a0">left</font>, <font color="#2040a0">complex</font> <font color="#2040a0">right</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+<font color="#2040a0">complex</font> <font color="#2040a0">complex_sub</font><font color="#4444FF">(</font><font color="#2040a0">complex</font> <font color="#2040a0">left</font>, <font color="#2040a0">complex</font> <font color="#2040a0">right</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+<font color="#2040a0">complex</font> <font color="#2040a0">complex_mult</font><font color="#4444FF">(</font><font color="#2040a0">complex</font> <font color="#2040a0">left</font>, <font color="#2040a0">complex</font> <font color="#2040a0">right</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+
+<font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:complex number function definitions" href="#chunk%20use:complex%20number%20function%20definitions">complex number function definitions</a>&gt;&gt;=</b></font>
+<font color="#2040a0">complex</font> <font color="#2040a0">complex_from_polar</font><font color="#4444FF">(</font><strong>double</strong> <font color="#2040a0">r</font>, <strong>double</strong> <font color="#2040a0">theta_radians</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+    <font color="#2040a0">complex</font> <font color="#2040a0">result</font><font color="#4444FF">;</font>
+    <font color="#2040a0">result</font>.<font color="#2040a0">re</font> <font color="#4444FF">=</font> <font color="#2040a0">r</font> <font color="#4444FF">*</font> <font color="#2040a0">cos</font><font color="#4444FF">(</font><font color="#2040a0">theta_radians</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <font color="#2040a0">result</font>.<font color="#2040a0">im</font> <font color="#4444FF">=</font> <font color="#2040a0">r</font> <font color="#4444FF">*</font> <font color="#2040a0">sin</font><font color="#4444FF">(</font><font color="#2040a0">theta_radians</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <strong>return</strong> <font color="#2040a0">result</font><font color="#4444FF">;</font>
+<font color="#4444FF"><strong>}</strong></font>
+
+<strong>double</strong> <font color="#2040a0">complex_magnitude</font><font color="#4444FF">(</font><font color="#2040a0">complex</font> <font color="#2040a0">c</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+    <strong>return</strong> <font color="#2040a0">sqrt</font><font color="#4444FF">(</font><font color="#2040a0">c</font>.<font color="#2040a0">re</font><font color="#4444FF">*</font><font color="#2040a0">c</font>.<font color="#2040a0">re</font> <font color="#4444FF">+</font> <font color="#2040a0">c</font>.<font color="#2040a0">im</font><font color="#4444FF">*</font><font color="#2040a0">c</font>.<font color="#2040a0">im</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+<font color="#4444FF"><strong>}</strong></font>
+
+<font color="#2040a0">complex</font> <font color="#2040a0">complex_add</font><font color="#4444FF">(</font><font color="#2040a0">complex</font> <font color="#2040a0">left</font>, <font color="#2040a0">complex</font> <font color="#2040a0">right</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+    <font color="#2040a0">complex</font> <font color="#2040a0">result</font><font color="#4444FF">;</font>
+    <font color="#2040a0">result</font>.<font color="#2040a0">re</font> <font color="#4444FF">=</font> <font color="#2040a0">left</font>.<font color="#2040a0">re</font> <font color="#4444FF">+</font> <font color="#2040a0">right</font>.<font color="#2040a0">re</font><font color="#4444FF">;</font>
+    <font color="#2040a0">result</font>.<font color="#2040a0">im</font> <font color="#4444FF">=</font> <font color="#2040a0">left</font>.<font color="#2040a0">im</font> <font color="#4444FF">+</font> <font color="#2040a0">right</font>.<font color="#2040a0">im</font><font color="#4444FF">;</font>
+    <strong>return</strong> <font color="#2040a0">result</font><font color="#4444FF">;</font>
+<font color="#4444FF"><strong>}</strong></font>
+
+<font color="#2040a0">complex</font> <font color="#2040a0">complex_sub</font><font color="#4444FF">(</font><font color="#2040a0">complex</font> <font color="#2040a0">left</font>, <font color="#2040a0">complex</font> <font color="#2040a0">right</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+    <font color="#2040a0">complex</font> <font color="#2040a0">result</font><font color="#4444FF">;</font>
+    <font color="#2040a0">result</font>.<font color="#2040a0">re</font> <font color="#4444FF">=</font> <font color="#2040a0">left</font>.<font color="#2040a0">re</font> <font color="#4444FF">-</font> <font color="#2040a0">right</font>.<font color="#2040a0">re</font><font color="#4444FF">;</font>
+    <font color="#2040a0">result</font>.<font color="#2040a0">im</font> <font color="#4444FF">=</font> <font color="#2040a0">left</font>.<font color="#2040a0">im</font> <font color="#4444FF">-</font> <font color="#2040a0">right</font>.<font color="#2040a0">im</font><font color="#4444FF">;</font>
+    <strong>return</strong> <font color="#2040a0">result</font><font color="#4444FF">;</font>
+<font color="#4444FF"><strong>}</strong></font>
+
+<font color="#2040a0">complex</font> <font color="#2040a0">complex_mult</font><font color="#4444FF">(</font><font color="#2040a0">complex</font> <font color="#2040a0">left</font>, <font color="#2040a0">complex</font> <font color="#2040a0">right</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+    <font color="#2040a0">complex</font> <font color="#2040a0">result</font><font color="#4444FF">;</font>
+    <font color="#2040a0">result</font>.<font color="#2040a0">re</font> <font color="#4444FF">=</font> <font color="#2040a0">left</font>.<font color="#2040a0">re</font><font color="#4444FF">*</font><font color="#2040a0">right</font>.<font color="#2040a0">re</font> <font color="#4444FF">-</font> <font color="#2040a0">left</font>.<font color="#2040a0">im</font><font color="#4444FF">*</font><font color="#2040a0">right</font>.<font color="#2040a0">im</font><font color="#4444FF">;</font>
+    <font color="#2040a0">result</font>.<font color="#2040a0">im</font> <font color="#4444FF">=</font> <font color="#2040a0">left</font>.<font color="#2040a0">re</font><font color="#4444FF">*</font><font color="#2040a0">right</font>.<font color="#2040a0">im</font> <font color="#4444FF">+</font> <font color="#2040a0">left</font>.<font color="#2040a0">im</font><font color="#4444FF">*</font><font color="#2040a0">right</font>.<font color="#2040a0">re</font><font color="#4444FF">;</font>
+    <strong>return</strong> <font color="#2040a0">result</font><font color="#4444FF">;</font>
+<font color="#4444FF"><strong>}</strong></font>
+</pre>
+<p>The use of <code>sin()</code>, <code>cos()</code>, and <code>sqrt()</code> requires the header math.h:
+</p>
+<pre><font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:complex number headers" href="#chunk%20use:complex%20number%20headers">complex number headers</a>&gt;&gt;=</b></font>
+<font color="#0000ff"><strong>#include <font color="#008000">&lt;math.h&gt;</font></strong></font>
+</pre>
+<h2><span class="editsection">[<a href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;action=edit&amp;section=2" title="Edit section: Naïve evaluation of definition">edit</a>]</span> <span class="mw-headline" id="Na.C3.AFve_evaluation_of_definition"> Naïve evaluation of definition </span></h2>
+<p>First we discuss the simplest possible DFT solution in order to 
+address some of the issues in a simpler setting. Suppose that our input 
+vector is <b>x</b> and our output vector is <b>X</b>. Then the discrete Fourier transform is defined by the formula:
+</p>
+<dl><dd>For each <img class="tex" alt="0 \le k &lt; N" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/d97d7f5822a716ffcfb7a5cb37337de7.png">, <img class="tex" alt=" X_k =  \sum_{n=0}^{N-1} x_n e^{-\frac{2\pi i}{N} nk}" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/a23901201fdf23b5574f0afb29e9ac9a.png">
+</dd></dl>
+<p>The quantity <img class="tex" alt="e^{-\frac{2\pi i}{N} nk}" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/d437c1ca3439592c26fd8c54b960256c.png"> is most easily described in terms of its polar complex coordinates: it is on the unit circle (distance <i>r</i>=1 from the origin) and forms an angle θ of <img class="tex" alt="-\frac{2\pi}{N} nk" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/01dc36c35da894560e76c751c34991cf.png"> radians with the positive real axis. This enables us to evaluate the definition as follows:
+</p>
+<pre><font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:FFT prototypes" href="#chunk%20use:FFT%20prototypes">FFT prototypes</a>&gt;&gt;=</b></font>
+<font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">DFT_naive_1</font><font color="#4444FF">(</font><font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">x</font>, <strong>int</strong> <font color="#2040a0">N</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+<font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:Naive DFT" href="#chunk%20use:Naive%20DFT">Naive DFT</a>&gt;&gt;=</b></font>
+<font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">DFT_naive_1</font><font color="#4444FF">(</font><font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">x</font>, <strong>int</strong> <font color="#2040a0">N</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+    <font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">X</font> <font color="#4444FF">=</font> <font color="#4444FF">(</font><font color="#2040a0">complex</font><font color="#4444FF">*</font><font color="#4444FF">)</font> <font color="#2040a0">malloc</font><font color="#4444FF">(</font><strong>sizeof</strong><font color="#4444FF">(</font><strong>struct</strong> <font color="#2040a0">complex_t</font><font color="#4444FF">)</font> <font color="#4444FF">*</font> <font color="#2040a0">N</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <strong>int</strong> <font color="#2040a0">k</font>, <font color="#2040a0">n</font><font color="#4444FF">;</font>
+    <strong>for</strong><font color="#4444FF">(</font><font color="#2040a0">k</font><font color="#4444FF">=</font><font color="#FF0000">0</font><font color="#4444FF">;</font> <font color="#2040a0">k</font><font color="#4444FF">&lt;</font><font color="#2040a0">N</font><font color="#4444FF">;</font> <font color="#2040a0">k</font><font color="#4444FF">+</font><font color="#4444FF">+</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+        <font color="#2040a0">X</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font>.<font color="#2040a0">re</font> <font color="#4444FF">=</font> <font color="#2040a0">X</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font>.<font color="#2040a0">im</font> <font color="#4444FF">=</font> <font color="#FF0000">0.0</font><font color="#4444FF">;</font>
+        <strong>for</strong><font color="#4444FF">(</font><font color="#2040a0">n</font><font color="#4444FF">=</font><font color="#FF0000">0</font><font color="#4444FF">;</font> <font color="#2040a0">n</font><font color="#4444FF">&lt;</font><font color="#2040a0">N</font><font color="#4444FF">;</font> <font color="#2040a0">n</font><font color="#4444FF">+</font><font color="#4444FF">+</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+            <font color="#2040a0">X</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font> <font color="#4444FF">=</font> <font color="#2040a0">complex_add</font><font color="#4444FF">(</font><font color="#2040a0">X</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font>, <font color="#2040a0">complex_mult</font><font color="#4444FF">(</font><font color="#2040a0">x</font><font color="#4444FF">[</font><font color="#2040a0">n</font><font color="#4444FF">]</font>, <font color="#2040a0">complex_from_polar</font><font color="#4444FF">(</font><font color="#FF0000">1</font>, <font color="#4444FF">-</font><font color="#FF0000">2</font><font color="#4444FF">*</font><font color="#2040a0">PI</font><font color="#4444FF">*</font><font color="#2040a0">n</font><font color="#4444FF">*</font><font color="#2040a0">k</font>/<font color="#2040a0">N</font><font color="#4444FF">)</font><font color="#4444FF">)</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+        <font color="#4444FF"><strong>}</strong></font>
+    <font color="#4444FF"><strong>}</strong></font>
+    <strong>return</strong> <font color="#2040a0">X</font><font color="#4444FF">;</font>
+<font color="#4444FF"><strong>}</strong></font>
+</pre>
+<p>We require headers for memory management and need to define <code>PI</code>:
+</p>
+<pre><font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:FFT headers" href="#chunk%20use:FFT%20headers">FFT headers</a>&gt;&gt;=</b></font>
+<font color="#0000ff"><strong>#include <font color="#008000">&lt;stdlib.h&gt;</font></strong></font>
+
+<font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:FFT constants" href="#chunk%20use:FFT%20constants">FFT constants</a>&gt;&gt;=</b></font>
+<font color="#0000ff"><strong>#define PI  3.1415926535897932</strong></font>
+</pre>
+<p>This works well for very small inputs and does not place any requirements on <i>N</i>. At the expense of additional space, we can avoid repeatedly recomputing the factors <img class="tex" alt="e^{-\frac{2\pi i}{N} nk}" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/d437c1ca3439592c26fd8c54b960256c.png">. Instead, we compute only the <i>N</i> values <img class="tex" alt="e^{-\frac{2\pi i}{N} k}" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/f511debe66e00239e6ad7ee805617dc4.png"> for <img class="tex" alt="0 \leq k &lt; N" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/d97d7f5822a716ffcfb7a5cb37337de7.png"> and use the fact that <span class="texhtml" dir="ltr"><i>e</i><sup>2π<i>i</i><i>k</i></sup> = 1</span> to reduce to one of these:
+</p>
+<dl><dd><img class="tex" alt="e^{-\frac{2\pi i}{N} nk} = e^{-\frac{2\pi i}{N} K}" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/df3b596840559418c28fa9d52ebe250a.png"> where <img class="tex" alt="K \equiv nk\pmod N" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/e4be7e515b7c406a86c339944c558822.png"> and <img class="tex" alt="0 \leq K &lt; N" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/f7fe2f9cf247b413933cb8df62cfc1c1.png">.
+</dd></dl>
+<p>In code:
+</p>
+<pre><font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:FFT prototypes" href="#chunk%20use:FFT%20prototypes">FFT prototypes</a>&gt;&gt;=</b></font>
+<font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">DFT_naive_2</font><font color="#4444FF">(</font><font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">x</font>, <strong>int</strong> <font color="#2040a0">N</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+<font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:Naive DFT" href="#chunk%20use:Naive%20DFT">Naive DFT</a>&gt;&gt;=</b></font>
+<font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">DFT_naive_2</font><font color="#4444FF">(</font><font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">x</font>, <strong>int</strong> <font color="#2040a0">N</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+    <font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">X</font> <font color="#4444FF">=</font> <font color="#4444FF">(</font><font color="#2040a0">complex</font><font color="#4444FF">*</font><font color="#4444FF">)</font> <font color="#2040a0">malloc</font><font color="#4444FF">(</font><strong>sizeof</strong><font color="#4444FF">(</font><strong>struct</strong> <font color="#2040a0">complex_t</font><font color="#4444FF">)</font> <font color="#4444FF">*</font> <font color="#2040a0">N</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">Nth_root</font> <font color="#4444FF">=</font> <font color="#4444FF">(</font><font color="#2040a0">complex</font><font color="#4444FF">*</font><font color="#4444FF">)</font> <font color="#2040a0">malloc</font><font color="#4444FF">(</font><strong>sizeof</strong><font color="#4444FF">(</font><strong>struct</strong> <font color="#2040a0">complex_t</font><font color="#4444FF">)</font> <font color="#4444FF">*</font> <font color="#2040a0">N</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <strong>int</strong> <font color="#2040a0">k</font>, <font color="#2040a0">n</font><font color="#4444FF">;</font>
+    <strong>for</strong><font color="#4444FF">(</font><font color="#2040a0">k</font><font color="#4444FF">=</font><font color="#FF0000">0</font><font color="#4444FF">;</font> <font color="#2040a0">k</font><font color="#4444FF">&lt;</font><font color="#2040a0">N</font><font color="#4444FF">;</font> <font color="#2040a0">k</font><font color="#4444FF">+</font><font color="#4444FF">+</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+        <font color="#2040a0">Nth_root</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font> <font color="#4444FF">=</font> <font color="#2040a0">complex_from_polar</font><font color="#4444FF">(</font><font color="#FF0000">1</font>, <font color="#4444FF">-</font><font color="#FF0000">2</font><font color="#4444FF">*</font><font color="#2040a0">PI</font><font color="#4444FF">*</font><font color="#2040a0">k</font>/<font color="#2040a0">N</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <font color="#4444FF"><strong>}</strong></font>
+    <strong>for</strong><font color="#4444FF">(</font><font color="#2040a0">k</font><font color="#4444FF">=</font><font color="#FF0000">0</font><font color="#4444FF">;</font> <font color="#2040a0">k</font><font color="#4444FF">&lt;</font><font color="#2040a0">N</font><font color="#4444FF">;</font> <font color="#2040a0">k</font><font color="#4444FF">+</font><font color="#4444FF">+</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+        <font color="#2040a0">X</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font>.<font color="#2040a0">re</font> <font color="#4444FF">=</font> <font color="#2040a0">X</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font>.<font color="#2040a0">im</font> <font color="#4444FF">=</font> <font color="#FF0000">0.0</font><font color="#4444FF">;</font>
+        <strong>for</strong><font color="#4444FF">(</font><font color="#2040a0">n</font><font color="#4444FF">=</font><font color="#FF0000">0</font><font color="#4444FF">;</font> <font color="#2040a0">n</font><font color="#4444FF">&lt;</font><font color="#2040a0">N</font><font color="#4444FF">;</font> <font color="#2040a0">n</font><font color="#4444FF">+</font><font color="#4444FF">+</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+            <font color="#2040a0">X</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font> <font color="#4444FF">=</font> <font color="#2040a0">complex_add</font><font color="#4444FF">(</font><font color="#2040a0">X</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font>, <font color="#2040a0">complex_mult</font><font color="#4444FF">(</font><font color="#2040a0">x</font><font color="#4444FF">[</font><font color="#2040a0">n</font><font color="#4444FF">]</font>, <font color="#2040a0">Nth_root</font><font color="#4444FF">[</font><font color="#4444FF">(</font><font color="#2040a0">n</font><font color="#4444FF">*</font><font color="#2040a0">k</font><font color="#4444FF">)</font> <font color="#4444FF">%</font> <font color="#2040a0">N</font><font color="#4444FF">]</font><font color="#4444FF">)</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+        <font color="#4444FF"><strong>}</strong></font>
+    <font color="#4444FF"><strong>}</strong></font>
+    <font color="#2040a0">free</font><font color="#4444FF">(</font><font color="#2040a0">Nth_root</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <strong>return</strong> <font color="#2040a0">X</font><font color="#4444FF">;</font>
+<font color="#4444FF"><strong>}</strong></font>
+</pre>
+<p>This considerably speeds the algorithm in practice. Unfortunately, even with this change, directly evaluating this sum for each <i>k</i> requires <span class="texhtml" dir="ltr"><i>O</i>(<i>N</i><sup>2</sup>)</span> time overall, which is prohibitive for large <i>N</i>.
+</p>
+<h2><span class="editsection">[<a href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;action=edit&amp;section=3" title="Edit section: Radix-2 decimation in time">edit</a>]</span> <span class="mw-headline" id="Radix-2_decimation_in_time"> Radix-2 decimation in time </span></h2>
+<p>The <i>radix-2 decimation in time</i> algorithm uses a divide-and-conquer approach to improve efficiency. It begins by separating the input vector <b>x</b> into two smaller vectors <b>d</b> and <b>e</b>, with <b>d</b> containing the odd-numbered elements of the original vector and <b>e</b> containing the even-numbered elements. For example:
+</p>
+<dl><dd><b>x</b> = (1, 2, 3, 4, 5, 6)
+</dd><dd><b>d</b> = (2, 4, 6)
+</dd><dd><b>e</b> = (1, 3, 5)
+</dd></dl>
+<p>(Keep in mind that the indexing starts at zero). We then recursively compute the FFTs of <b>d</b> and <b>e</b>, call them <b>D</b> and <b>E</b>. We use them to construct <b>X</b> according to the following formula, which can be shown directly from the definition:
+</p>
+<dl><dd><img class="tex" alt=" \begin{matrix}
+X_k       &amp; = &amp; E_k +  e^{-\frac{2\pi i}{N}k} D_k &amp; \mbox{ } 0 \le k &lt; N/2 \\
+X_{k+N/2} &amp; = &amp; E_k -  e^{-\frac{2\pi i}{N}k} D_k &amp; \mbox{ } 0 \le k &lt; N/2
+\end{matrix}
+" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/3cb07f42684d95954a182a70c1d73068.png">
+</dd></dl>
+<p>Thus, all we need to do to compute <b>X</b> is to compute <b>D</b>, <b>E</b>, and the <i>N</i>/2 complex roots of unity specified by <img class="tex" alt="e^{-\frac{2\pi i}{N}k}" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/f511debe66e00239e6ad7ee805617dc4.png"> for <img class="tex" alt="0 \le k &lt; N/2" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/2078d0a8d61cdeda8cff910e793c1430.png"> (called <i>twiddle factors</i>), then do some basic arithmetic. The additional work after computing <b>D</b> and <b>E</b> is linear, so the analysis is just like that of mergesort, requiring <span class="texhtml" dir="ltr"><i>O</i>(<i>N</i>log<i>N</i>)</span> worst-case time. Following is a straightforward implementation based on recursion using the above formulas:
+</p>
+<pre><font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:FFT prototypes" href="#chunk%20use:FFT%20prototypes">FFT prototypes</a>&gt;&gt;=</b></font>
+<font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">FFT_simple</font><font color="#4444FF">(</font><font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">x</font>, <strong>int</strong> <font color="#2040a0">N</font> <font color="#444444">/* must be a power of 2 */</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+<font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:Simple FFT" href="#chunk%20use:Simple%20FFT">Simple FFT</a>&gt;&gt;=</b></font>
+<font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">FFT_simple</font><font color="#4444FF">(</font><font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">x</font>, <strong>int</strong> <font color="#2040a0">N</font> <font color="#444444">/* must be a power of 2 */</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+    <font color="#2040a0">complex</font><font color="#4444FF">*</font> <font color="#2040a0">X</font> <font color="#4444FF">=</font> <font color="#4444FF">(</font><font color="#2040a0">complex</font><font color="#4444FF">*</font><font color="#4444FF">)</font> <font color="#2040a0">malloc</font><font color="#4444FF">(</font><strong>sizeof</strong><font color="#4444FF">(</font><strong>struct</strong> <font color="#2040a0">complex_t</font><font color="#4444FF">)</font> <font color="#4444FF">*</font> <font color="#2040a0">N</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <font color="#2040a0">complex</font> <font color="#4444FF">*</font> <font color="#2040a0">d</font>, <font color="#4444FF">*</font> <font color="#2040a0">e</font>, <font color="#4444FF">*</font> <font color="#2040a0">D</font>, <font color="#4444FF">*</font> <font color="#2040a0">E</font><font color="#4444FF">;</font>
+    <strong>int</strong> <font color="#2040a0">k</font><font color="#4444FF">;</font>
+
+    <strong>if</strong> <font color="#4444FF">(</font><font color="#2040a0">N</font> <font color="#4444FF">=</font><font color="#4444FF">=</font> <font color="#FF0000">1</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+        <font color="#2040a0">X</font><font color="#4444FF">[</font><font color="#FF0000">0</font><font color="#4444FF">]</font> <font color="#4444FF">=</font> <font color="#2040a0">x</font><font color="#4444FF">[</font><font color="#FF0000">0</font><font color="#4444FF">]</font><font color="#4444FF">;</font>
+        <strong>return</strong> <font color="#2040a0">X</font><font color="#4444FF">;</font>
+    <font color="#4444FF"><strong>}</strong></font>
+
+    <font color="#2040a0">e</font> <font color="#4444FF">=</font> <font color="#4444FF">(</font><font color="#2040a0">complex</font><font color="#4444FF">*</font><font color="#4444FF">)</font> <font color="#2040a0">malloc</font><font color="#4444FF">(</font><strong>sizeof</strong><font color="#4444FF">(</font><strong>struct</strong> <font color="#2040a0">complex_t</font><font color="#4444FF">)</font> <font color="#4444FF">*</font> <font color="#2040a0">N</font>/<font color="#FF0000">2</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <font color="#2040a0">d</font> <font color="#4444FF">=</font> <font color="#4444FF">(</font><font color="#2040a0">complex</font><font color="#4444FF">*</font><font color="#4444FF">)</font> <font color="#2040a0">malloc</font><font color="#4444FF">(</font><strong>sizeof</strong><font color="#4444FF">(</font><strong>struct</strong> <font color="#2040a0">complex_t</font><font color="#4444FF">)</font> <font color="#4444FF">*</font> <font color="#2040a0">N</font>/<font color="#FF0000">2</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <strong>for</strong><font color="#4444FF">(</font><font color="#2040a0">k</font> <font color="#4444FF">=</font> <font color="#FF0000">0</font><font color="#4444FF">;</font> <font color="#2040a0">k</font> <font color="#4444FF">&lt;</font> <font color="#2040a0">N</font>/<font color="#FF0000">2</font><font color="#4444FF">;</font> <font color="#2040a0">k</font><font color="#4444FF">+</font><font color="#4444FF">+</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+        <font color="#2040a0">e</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font> <font color="#4444FF">=</font> <font color="#2040a0">x</font><font color="#4444FF">[</font><font color="#FF0000">2</font><font color="#4444FF">*</font><font color="#2040a0">k</font><font color="#4444FF">]</font><font color="#4444FF">;</font>
+        <font color="#2040a0">d</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font> <font color="#4444FF">=</font> <font color="#2040a0">x</font><font color="#4444FF">[</font><font color="#FF0000">2</font><font color="#4444FF">*</font><font color="#2040a0">k</font> <font color="#4444FF">+</font> <font color="#FF0000">1</font><font color="#4444FF">]</font><font color="#4444FF">;</font>
+    <font color="#4444FF"><strong>}</strong></font>
+
+    <font color="#2040a0">E</font> <font color="#4444FF">=</font> <font color="#2040a0">FFT_simple</font><font color="#4444FF">(</font><font color="#2040a0">e</font>, <font color="#2040a0">N</font>/<font color="#FF0000">2</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <font color="#2040a0">D</font> <font color="#4444FF">=</font> <font color="#2040a0">FFT_simple</font><font color="#4444FF">(</font><font color="#2040a0">d</font>, <font color="#2040a0">N</font>/<font color="#FF0000">2</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    
+    <strong>for</strong><font color="#4444FF">(</font><font color="#2040a0">k</font> <font color="#4444FF">=</font> <font color="#FF0000">0</font><font color="#4444FF">;</font> <font color="#2040a0">k</font> <font color="#4444FF">&lt;</font> <font color="#2040a0">N</font>/<font color="#FF0000">2</font><font color="#4444FF">;</font> <font color="#2040a0">k</font><font color="#4444FF">+</font><font color="#4444FF">+</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+        <font color="#444444">/* Multiply entries of D by the twiddle factors e^(-2*pi*i/N * k) */</font>
+        <font color="#2040a0">D</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font> <font color="#4444FF">=</font> <font color="#2040a0">complex_mult</font><font color="#4444FF">(</font><font color="#2040a0">complex_from_polar</font><font color="#4444FF">(</font><font color="#FF0000">1</font>, <font color="#4444FF">-</font><font color="#FF0000">2.0</font><font color="#4444FF">*</font><font color="#2040a0">PI</font><font color="#4444FF">*</font><font color="#2040a0">k</font>/<font color="#2040a0">N</font><font color="#4444FF">)</font>, <font color="#2040a0">D</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <font color="#4444FF"><strong>}</strong></font>
+
+    <strong>for</strong><font color="#4444FF">(</font><font color="#2040a0">k</font> <font color="#4444FF">=</font> <font color="#FF0000">0</font><font color="#4444FF">;</font> <font color="#2040a0">k</font> <font color="#4444FF">&lt;</font> <font color="#2040a0">N</font>/<font color="#FF0000">2</font><font color="#4444FF">;</font> <font color="#2040a0">k</font><font color="#4444FF">+</font><font color="#4444FF">+</font><font color="#4444FF">)</font> <font color="#4444FF"><strong>{</strong></font>
+        <font color="#2040a0">X</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font>       <font color="#4444FF">=</font> <font color="#2040a0">complex_add</font><font color="#4444FF">(</font><font color="#2040a0">E</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font>, <font color="#2040a0">D</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+        <font color="#2040a0">X</font><font color="#4444FF">[</font><font color="#2040a0">k</font> <font color="#4444FF">+</font> <font color="#2040a0">N</font>/<font color="#FF0000">2</font><font color="#4444FF">]</font> <font color="#4444FF">=</font> <font color="#2040a0">complex_sub</font><font color="#4444FF">(</font><font color="#2040a0">E</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font>, <font color="#2040a0">D</font><font color="#4444FF">[</font><font color="#2040a0">k</font><font color="#4444FF">]</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <font color="#4444FF"><strong>}</strong></font>
+
+    <font color="#2040a0">free</font><font color="#4444FF">(</font><font color="#2040a0">D</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <font color="#2040a0">free</font><font color="#4444FF">(</font><font color="#2040a0">E</font><font color="#4444FF">)</font><font color="#4444FF">;</font>
+    <strong>return</strong> <font color="#2040a0">X</font><font color="#4444FF">;</font>
+<font color="#4444FF"><strong>}</strong></font>
+</pre>
+<p>Although this works, is simple, and has good asymptotic performance, 
+in practice the large number of allocations above degrade speed and 
+triple memory use, which is particularly harmful on large inputs. 
+Additionally, many of the <code>complex_from_polar()</code> calls are redundant, since only <i>N</i>th
+ roots of unity are used anywhere in the recursion tree. Finally, this 
+implementation has considerable function call overhead and would ideally
+ be replaced by a simpler algorithm on small subvectors.
+</p>
+<table style="width:200;margin-top:+.7em;background-color:#ffffff;border:1px solid #ccc">
+<tbody><tr>
+<td>
+</td>
+<td><div class="floatleft"><a href="http://en.literateprograms.org/File:Under_construction.gif" class="image"><img alt="Under construction.gif" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/50px-Under_construction.gif" srcset="/images/thumb/Under_construction.gif/75px-Under_construction.gif 1.5x, /images/thumb/Under_construction.gif/100px-Under_construction.gif 2x" height="50" width="50"></a></div>
+</td>
+<td><table><tbody><tr><td style="text-align:center"><b>TODO</b></td></tr><tr><td>Discuss optimizations</td></tr></tbody></table>
+</td></tr></tbody></table>
+<h2><span class="editsection">[<a href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;action=edit&amp;section=4" title="Edit section: Files">edit</a>]</span> <span class="mw-headline" id="Files"> Files </span></h2>
+<p>We create a few separate modules: one for our basic complex number 
+support, one for the FFT implementations, and one for the test driver 
+and <code>main()</code>, described in the next section. We include the complex number header in the FFT header for the <code>complex</code> type.
+</p>
+<pre><font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:complex_simple.h" href="#chunk%20use:complex_simple.h">complex_simple.h</a>&gt;&gt;=</b></font>
+<font color="#0000ff"><strong>#ifndef _COMPLEX_SIMPLE_H_</strong></font>
+<font color="#0000ff"><strong>#define _COMPLEX_SIMPLE_H_</strong></font>
+
+<span style="border: 1px solid #a0a0a0; padding: 0.05em 0.2em 0.03em 0.2em;"><font face="times" color="#000000"><a name="chunk use:complex number datatype" href="#chunk%20def:complex%20number%20datatype">complex number datatype</a></font></span>
+<span style="border: 1px solid #a0a0a0; padding: 0.05em 0.2em 0.03em 0.2em;"><font face="times" color="#000000"><a name="chunk use:complex number prototypes" href="#chunk%20def:complex%20number%20prototypes">complex number prototypes</a></font></span>
+
+<font color="#0000ff"><strong>#endif<font color="#444444"> /* #ifndef _COMPLEX_SIMPLE_H_ */</font></strong></font>
+
+<font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:complex_simple.c" href="#chunk%20use:complex_simple.c">complex_simple.c</a>&gt;&gt;=</b></font>
+<font color="#0000ff"><strong>#include <font color="#008000">"complex_simple.h"</font></strong></font>
+<span style="border: 1px solid #a0a0a0; padding: 0.05em 0.2em 0.03em 0.2em;"><font face="times" color="#000000"><a name="chunk use:complex number headers" href="#chunk%20def:complex%20number%20headers">complex number headers</a></font></span>
+
+<span style="border: 1px solid #a0a0a0; padding: 0.05em 0.2em 0.03em 0.2em;"><font face="times" color="#000000"><a name="chunk use:complex number function definitions" href="#chunk%20def:complex%20number%20function%20definitions">complex number function definitions</a></font></span>
+</pre>
+<pre><font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:fft.h" href="#chunk%20use:fft.h">fft.h</a>&gt;&gt;=</b></font>
+<font color="#0000ff"><strong>#ifndef _FFT_H_</strong></font>
+<font color="#0000ff"><strong>#define _FFT_H_</strong></font>
+
+<font color="#0000ff"><strong>#include <font color="#008000">"complex_simple.h"</font></strong></font>
+
+<span style="border: 1px solid #a0a0a0; padding: 0.05em 0.2em 0.03em 0.2em;"><font face="times" color="#000000"><a name="chunk use:FFT prototypes" href="#chunk%20def:FFT%20prototypes">FFT prototypes</a></font></span>
+
+<font color="#0000ff"><strong>#endif<font color="#444444"> /* #ifndef _FFT_H_ */</font></strong></font>
+
+<font face="times" color="#000000"><b>&lt;&lt;<a name="chunk def:fft.c" href="#chunk%20use:fft.c">fft.c</a>&gt;&gt;=</b></font>
+<font color="#0000ff"><strong>#include <font color="#008000">"fft.h"</font></strong></font>
+<span style="border: 1px solid #a0a0a0; padding: 0.05em 0.2em 0.03em 0.2em;"><font face="times" color="#000000"><a name="chunk use:FFT headers" href="#chunk%20def:FFT%20headers">FFT headers</a></font></span>
+
+<span style="border: 1px solid #a0a0a0; padding: 0.05em 0.2em 0.03em 0.2em;"><font face="times" color="#000000"><a name="chunk use:FFT constants" href="#chunk%20def:FFT%20constants">FFT constants</a></font></span>
+
+<span style="border: 1px solid #a0a0a0; padding: 0.05em 0.2em 0.03em 0.2em;"><font face="times" color="#000000"><a name="chunk use:Naive DFT" href="#chunk%20def:Naive%20DFT">Naive DFT</a></font></span>
+
+<span style="border: 1px solid #a0a0a0; padding: 0.05em 0.2em 0.03em 0.2em;"><font face="times" color="#000000"><a name="chunk use:Simple FFT" href="#chunk%20def:Simple%20FFT">Simple FFT</a></font></span>
+
+</pre>
+<h2><span class="editsection">[<a href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;action=edit&amp;section=5" title="Edit section: Test driver">edit</a>]</span> <span class="mw-headline" id="Test_driver"> Test driver </span></h2>
+<table style="width:200;margin-top:+.7em;background-color:#ffffff;border:1px solid #ccc">
+<tbody><tr>
+<td>
+</td>
+<td><div class="floatleft"><a href="http://en.literateprograms.org/File:Under_construction.gif" class="image"><img alt="Under construction.gif" src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/50px-Under_construction.gif" srcset="/images/thumb/Under_construction.gif/75px-Under_construction.gif 1.5x, /images/thumb/Under_construction.gif/100px-Under_construction.gif 2x" height="50" width="50"></a></div>
+</td>
+<td><table><tbody><tr><td style="text-align:center"><b>TODO</b></td></tr><tr><td>This portion of this article is incomplete.</td></tr></tbody></table>
+</td></tr></tbody></table>
+<table style="border:5px double;background-color:#D0FFE0;font-size:12pt;color:grey;width:100%">
+<tbody><tr>
+<td align="center"> <span class="plainlinks"><a class="external text" href="http://en.literateprograms.org/index.php?title=Special:Downloadcode/Cooley-Tukey_FFT_algorithm_%28C%29&amp;oldid=19032">Download code</a></span>
+</td></tr></tbody></table>
+<a href="http://en.literateprograms.org/promissoryfee.php"><!-- hijacker --></a><a href="http://en.literateprograms.org/promissoryfee.php" style="display: none;">hijacker</a><div style="display: none;"><a href="http://en.literateprograms.org/promissoryfee.php">hijacker</a></div><a href="http://en.literateprograms.org/promissoryfee.php"></a><!-- <a href="/promissoryfee.php">hijacker</a> --><div style="position: absolute; top: -250px; left: -250px;"><a href="http://en.literateprograms.org/promissoryfee.php">hijacker</a></div><a href="http://en.literateprograms.org/promissoryfee.php"><span style="display: none;">hijacker</span></a><a href="http://en.literateprograms.org/promissoryfee.php"><div style="height: 0px; width: 0px;"></div></a>
+<!-- 
+NewPP limit report
+Preprocessor visited node count: 268/1000000
+Preprocessor generated node count: 629/1000000
+Post‐expand include size: 1584/2097152 bytes
+Template argument size: 21/2097152 bytes
+Highest expansion depth: 3/40
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key moonflar_literateprogramsdb:pcache:idhash:2763-0!1!0!!en!2!* and timestamp 20130926220448 -->
+</div>				<!-- /bodycontent -->
+								<!-- printfooter -->
+				<div class="printfooter">
+				Retrieved from "<a href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;oldid=19032">http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_(C)&amp;oldid=19032</a>"				</div>
+				<!-- /printfooter -->
+												<!-- catlinks -->
+				<div id="catlinks" class="catlinks"><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="http://en.literateprograms.org/Special:Categories" title="Special:Categories">Categories</a>: <ul><li><a href="http://en.literateprograms.org/Category:Developing" title="Category:Developing">Developing</a></li><li><a href="http://en.literateprograms.org/Category:Fast_fourier_transform" title="Category:Fast fourier transform">Fast fourier transform</a></li><li><a href="http://en.literateprograms.org/Category:Cooley-Tukey_FFT_algorithm" title="Category:Cooley-Tukey FFT algorithm">Cooley-Tukey FFT algorithm</a></li><li><a href="http://en.literateprograms.org/Category:Programming_language:C" title="Category:Programming language:C">Programming language:C</a></li><li><a href="http://en.literateprograms.org/Category:Environment:Portable" title="Category:Environment:Portable">Environment:Portable</a></li></ul></div></div>				<!-- /catlinks -->
+												<div class="visualClear"></div>
+				<!-- debughtml -->
+								<!-- /debughtml -->
+			</div>
+			<!-- /bodyContent -->
+		</div>
+		<!-- /content -->
+		<div id="mw-navigation">
+			<h2>Navigation menu</h2>
+			<!-- header -->
+			<div id="mw-head">
+				
+<!-- 0 -->
+<div id="p-personal" role="navigation" class="">
+	<h3>Personal tools</h3>
+	<ul>
+<li id="pt-createaccount"><a href="http://en.literateprograms.org/index.php?title=Special:UserLogin&amp;returnto=Cooley-Tukey+FFT+algorithm+%28C%29&amp;type=signup">Create account</a></li><li id="pt-login"><a href="http://en.literateprograms.org/index.php?title=Special:UserLogin&amp;returnto=Cooley-Tukey+FFT+algorithm+%28C%29" title="You are encouraged to log in; however, it is not mandatory [alt-shift-o]" accesskey="o">Log in</a></li>	</ul>
+</div>
+
+<!-- /0 -->
+				<div id="left-navigation">
+					
+<!-- 0 -->
+<div id="p-namespaces" role="navigation" class="vectorTabs">
+	<h3>Namespaces</h3>
+	<ul>
+					<li id="ca-nstab-main" class="selected"><span><a href="http://en.literateprograms.org/Cooley-Tukey_FFT_algorithm_%28C%29" title="View the content page [alt-shift-c]" accesskey="c">Page</a></span></li>
+					<li id="ca-talk" class="new"><span><a href="http://en.literateprograms.org/index.php?title=Talk:Cooley-Tukey_FFT_algorithm_%28C%29&amp;action=edit&amp;redlink=1" title="Discussion about the content page [alt-shift-t]" accesskey="t">Discussion</a></span></li>
+			</ul>
+</div>
+
+<!-- /0 -->
+
+<!-- 1 -->
+<div id="p-variants" role="navigation" class="vectorMenu emptyPortlet">
+	<h3 id="mw-vector-current-variant">
+		</h3>
+	<h3><span>Variants</span><a href="#"></a></h3>
+	<div class="menu">
+		<ul>
+					</ul>
+	</div>
+</div>
+
+<!-- /1 -->
+				</div>
+				<div id="right-navigation">
+					
+<!-- 0 -->
+<div id="p-views" role="navigation" class="vectorTabs">
+	<h3>Views</h3>
+	<ul>
+					<li id="ca-view" class="selected"><span><a href="http://en.literateprograms.org/Cooley-Tukey_FFT_algorithm_%28C%29">Read</a></span></li>
+					<li id="ca-edit"><span><a href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;action=edit" title="You can edit this page. Please use the preview button before saving [alt-shift-e]" accesskey="e">Edit</a></span></li>
+					<li id="ca-history" class="collapsible"><span><a href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;action=history" title="Past revisions of this page [alt-shift-h]" accesskey="h">View history</a></span></li>
+					<li id="ca-deletecode" class="collapsible"><span><a href="http://en.literateprograms.org/Special:Downloadcode/Cooley-Tukey_FFT_algorithm_%28C%29">Download code</a></span></li>
+			</ul>
+</div>
+
+<!-- /0 -->
+
+<!-- 1 -->
+<div id="p-cactions" role="navigation" class="vectorMenu emptyPortlet">
+	<h3><span>Actions</span><a href="#"></a></h3>
+	<div class="menu">
+		<ul>
+					</ul>
+	</div>
+</div>
+
+<!-- /1 -->
+
+<!-- 2 -->
+<div id="p-search" role="search">
+	<h3><label for="searchInput">Search</label></h3>
+	<form action="/index.php" id="searchform">
+				<div>
+			<input placeholder="Search" autocomplete="off" name="search" title="Search LiteratePrograms [alt-shift-f]" accesskey="f" id="searchInput" type="search">			<input name="go" value="Go" title="Go to a page with this exact name if exists" id="searchGoButton" class="searchButton" type="submit">			<input name="fulltext" value="Search" title="Search the pages for this text" id="mw-searchButton" class="searchButton" type="submit">					<input name="title" value="Special:Search" type="hidden">
+		</div>
+	</form>
+</div>
+
+<!-- /2 -->
+				</div>
+			</div>
+			<!-- /header -->
+			<!-- panel -->
+			<div id="mw-panel">
+				<!-- logo -->
+					<div id="p-logo" role="banner"><a style="background-image: url(/skins/common/images/LiteratePrograms_logo.png);" href="http://en.literateprograms.org/LiteratePrograms:Welcome" title="Visit the main page"></a></div>
+				<!-- /logo -->
+				
+<!-- navigation -->
+<div class="portal" role="navigation" id="p-navigation">
+	<h3>Navigation</h3>
+	<div class="body">
+		<ul>
+			<li id="n-mainpagesidebartext"><a href="http://en.literateprograms.org/LiteratePrograms:Welcome">Welcome</a></li>
+			<li id="n-portal"><a href="http://en.literateprograms.org/LiteratePrograms:Community_portal" title="About the project, what you can do, where to find things">Community portal</a></li>
+			<li id="n-recentchanges"><a href="http://en.literateprograms.org/Special:RecentChanges" title="A list of recent changes in the wiki [alt-shift-r]" accesskey="r">Recent changes</a></li>
+			<li id="n-newarticles"><a href="http://en.literateprograms.org/Special:NewPages">New articles</a></li>
+			<li id="n-randompage"><a href="http://en.literateprograms.org/Special:Random" title="Load a random page [alt-shift-x]" accesskey="x">Random article</a></li>
+			<li id="n-help"><a href="http://en.literateprograms.org/Help:Contents" title="The place to find out">Help</a></li>
+		</ul>
+	</div>
+</div>
+
+<!-- /navigation -->
+
+<!-- SEARCH -->
+
+<!-- /SEARCH -->
+
+<!-- TOOLBOX -->
+<div class="portal" role="navigation" id="p-tb">
+	<h3>Toolbox</h3>
+	<div class="body">
+		<ul>
+			<li id="t-whatlinkshere"><a href="http://en.literateprograms.org/Special:WhatLinksHere/Cooley-Tukey_FFT_algorithm_%28C%29" title="A list of all wiki pages that link here [alt-shift-j]" accesskey="j">What links here</a></li>
+			<li id="t-recentchangeslinked"><a href="http://en.literateprograms.org/Special:RecentChangesLinked/Cooley-Tukey_FFT_algorithm_%28C%29" title="Recent changes in pages linked from this page [alt-shift-k]" accesskey="k">Related changes</a></li>
+			<li id="t-specialpages"><a href="http://en.literateprograms.org/Special:SpecialPages" title="A list of all special pages [alt-shift-q]" accesskey="q">Special pages</a></li>
+			<li id="t-print"><a href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;printable=yes" rel="alternate" title="Printable version of this page [alt-shift-p]" accesskey="p">Printable version</a></li>
+			<li id="t-permalink"><a href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;oldid=19032" title="Permanent link to this revision of the page">Permanent link</a></li>
+			<li id="t-info"><a href="http://en.literateprograms.org/index.php?title=Cooley-Tukey_FFT_algorithm_%28C%29&amp;action=info">Page information</a></li>
+		</ul>
+	</div>
+</div>
+
+<!-- /TOOLBOX -->
+
+<!-- LANGUAGES -->
+
+<!-- /LANGUAGES -->
+			</div>
+			<!-- /panel -->
+		</div>
+		<!-- footer -->
+		<div id="footer" role="contentinfo">
+							<ul id="footer-info">
+											<li id="footer-info-lastmod"> This page was last modified on 25 September 2013, at 05:19.</li>
+											<li id="footer-info-copyright">Content is available under the <a href="http://en.literateprograms.org/LiteratePrograms:Copyrights" title="LiteratePrograms:Copyrights">Creative Commons CC0 1.0 Waiver</a>.</li>
+									</ul>
+							<ul id="footer-places">
+											<li id="footer-places-privacy"><a href="http://en.literateprograms.org/LiteratePrograms:Privacy_policy" title="LiteratePrograms:Privacy policy">Privacy policy</a></li>
+											<li id="footer-places-about"><a href="http://en.literateprograms.org/LiteratePrograms:About" title="LiteratePrograms:About">About LiteratePrograms</a></li>
+											<li id="footer-places-disclaimer"><a href="http://en.literateprograms.org/LiteratePrograms:General_disclaimer" title="LiteratePrograms:General disclaimer">Disclaimers</a></li>
+									</ul>
+										<ul id="footer-icons" class="noprint">
+					<li id="footer-copyrightico">
+						<a href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/cc0.png" alt="Creative Commons CC0 1.0 Waiver" height="31" width="88"></a>
+					</li>
+					<li id="footer-poweredbyico">
+						<a href="http://www.mediawiki.org/"><img src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" height="31" width="88"></a>
+					</li>
+				</ul>
+						<div style="clear:both"></div>
+		</div>
+		<!-- /footer -->
+		<script>if(window.mw){
+mw.loader.state({"site":"loading","user":"ready","user.groups":"ready"});
+}</script>
+<script>if(window.mw){
+mw.loader.load(["mediawiki.action.view.postEdit","mediawiki.user","mediawiki.page.ready","mediawiki.searchSuggest","mediawiki.hidpi","skins.vector.js"],
+ null, true);
+}</script>
+<script src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/load_003.php"></script>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script src="Cooley-Tukey%20FFT%20algorithm%20%28C%29%20-%20LiteratePrograms_fichiers/ga.js" type="text/javascript"></script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-30916801-1");
+pageTracker._trackPageview();
+</script><!-- Served in 0.142 secs. -->
+	
+
+<div class="suggestions" style="display: none; font-size: 14.6667px;"><div class="suggestions-results"></div><div class="suggestions-special"></div></div></body></html>
