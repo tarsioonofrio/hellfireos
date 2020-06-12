@@ -1,4 +1,4 @@
-APP = app/noc_test
+APP = usr-ex/noc_ex
 ARCH = mips/plasma
 
 CPU_ARCH = \"$(ARCH)\"
@@ -52,8 +52,8 @@ images:
 		$(DUMP) -s code$$i.elf > code$$i.cnt && \
 		$(OBJ) -O binary code$$i.elf code$$i.bin && \
 		$(SIZE) code$$i.elf && \
-		hexdump -v -e '4/1 "%02x" "\n"' code$$i.bin > code$$i.txt \
-	;done
+		hexdump -v -e '4/1 "%02x" "\n"' code$$i.bin > code$$i.txt ;\
+	done
 
 clean:
 	rm -rf *.o *~ *.elf *.bin *.cnt *.lst *.sec *.txt

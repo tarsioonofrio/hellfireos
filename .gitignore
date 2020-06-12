@@ -16,3 +16,13 @@ usr/sim/mpsoc_sim/mpsoc_sim
 *.cnt
 
 *.map
+
+platform/noc_3x2/*.txt
+
+platform/single_core/*.txt
+
+usr/sim/mpsoc_sim/reports/*.txt
+
+usr-ex/noc_3x2/*.txt
+
+platform/noc_3x2/makefile
