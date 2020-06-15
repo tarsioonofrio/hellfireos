@@ -1,8 +1,6 @@
 
 .idea/
 
-usr/sim/mpsoc_sim/mpsoc_sim
-
 *.o
 
 *.bin
@@ -17,12 +15,20 @@ usr/sim/mpsoc_sim/mpsoc_sim
 
 *.map
 
-platform/noc_3x2/*.txt
+platform/**
 
-platform/single_core/*.txt
+app/**
 
-usr/sim/mpsoc_sim/reports/*.txt
+usr/sim/mpsoc_sim/mpsoc_sim
+
+usr/sim/mpsoc_sim/**
 
 usr-ex/noc_3x2/*.txt
 
-platform/noc_3x2/makefile
+usr-tp2/noc_3x2/*.txt
+
+
+
+usr-tp2/tp2_files/create_bmp
+
+usr-tp2/tp2_files/create_image
