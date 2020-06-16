@@ -25,10 +25,11 @@ usr/sim/mpsoc_sim/**
 
 usr-ex/noc_3x2/*.txt
 
+usr-tp2/original-noc_3x2/*.txt
+
 usr-tp2/noc_3x2/*.txt
-
-
 
 usr-tp2/tp2_files/create_bmp
 
 usr-tp2/tp2_files/create_image
+
