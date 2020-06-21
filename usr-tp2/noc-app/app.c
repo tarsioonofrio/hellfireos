@@ -1,19 +1,25 @@
+#ifndef HELLFIREOS_APP_H
 #include <hellfire.h>
 #include <noc.h>
-
+#define HELLFIREOS_APP_H
+#endif //HELLFIREOS_APP_H
 #include "filter.h"
 #include "image.h"
 
-#define CRC_SIZE    4
-#define IMAGE_SIDE  256
-#define ARRAY_SIZE  3
-#define BUFFER_SIZE IMAGE_SIDE * ARRAY_SIZE + CRC_SIZE
+
+#define SIDE_IMAGE  256
+#define SIDE_SOBEL  5
+#define SIDE_GAUSS  7
+#define SIZE_CRC    4
+#define SIDE_MULTIPLE  1
+#define SIZE_BUFFER SIDE_IMAGE * SIDE_MULTIPLE + SIZE_CRC
+#define TIMEOUT 500
 
 _Noreturn void master(void)
 {
     int32_t i;
     uint32_t crc;
-    int8_t buf[BUFFER_SIZE];
+    int8_t buf[SIZE_BUFFER];
     uint8_t * ptr;
     int16_t val, channel;
 
@@ -25,6 +31,7 @@ _Noreturn void master(void)
     delay_ms(50);
 
     srand(hf_cpuid());
+    printf("Start\n");
 
     // generate a unique channel number for this CPU
     channel = hf_cpuid();
@@ -33,14 +40,14 @@ _Noreturn void master(void)
 //            buf[i] = *(ptr++);
 //        }
         crc = hf_crc32((int8_t *)ptr, sizeof(buf) - 4);
-        memcpy(ptr + BUFFER_SIZE - 4, &crc, 4);
-        val = hf_send(1, 2000, (int8_t *) ptr, BUFFER_SIZE, 1);
-//        val = hf_sendack(1, 2000, (int8_t *) ptr, BUFFER_SIZE, 1, 500);
+        memcpy(ptr + SIZE_BUFFER - 4, &crc, 4);
+        val = hf_send(1, 2000, (int8_t *) ptr, SIZE_BUFFER, 1);
+//        val = hf_sendack(1, 2000, (int8_t *) ptr, SIZE_BUFFER, 1, TIMEOUT);
         printf("sizeof %d\n", sizeof(buf));
-        if (val)
-            printf("hf_send(): error %d\n", val);
+//        if (val) printf("hf_send(): error %d\n", val);
+        if (val) printf("sender, hf_sendack(): error %d\n", val);
 
-        ptr = ptr + BUFFER_SIZE - 4;
+        ptr = ptr + SIZE_BUFFER - 4;
         printf("ptr %d\n", ptr);
         delay_ms(10);
     }
@@ -49,7 +56,7 @@ _Noreturn void master(void)
 
 _Noreturn void receiver(void)
 {
-    int8_t buf[BUFFER_SIZE];
+    int8_t buf[SIZE_BUFFER];
     uint16_t cpu, port, size;
     int16_t val;
     uint32_t crc;
@@ -63,31 +70,36 @@ _Noreturn void receiver(void)
         if (i < 0) continue;
 
         val = hf_recv(&cpu, &port, buf, &size, i);
-        if (val){
-            printf("hf_recv(): error %d\n", val);
-        } else {
-            memcpy(&crc, buf + size - 4, 4);
-            printf("R cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d]", cpu, port, i, size, crc,
-                   hf_queue_count(pktdrv_queue));
+//        val = hf_recvack(&cpu, &port, buf, &size, i);
+//        if (val) printf("Master, hf_sendack(): error %d\n", val);
 
-            if (hf_crc32(buf, size - 4) == crc) {
-                printf(" (CRC32 pass)\n");
-                val = hf_send(1, 3000, buf, size, 1);
-                if (val)
-                    printf("hf_send(): error %d\n", val);
-            }
-           else {
-                printf(" (CRC32 fail)\n");
-            }
+        if (val) {
+            printf("hf_recv(): error %d\n", val);
+            continue;
         }
+
+        memcpy(&crc, buf + size - 4, 4);
+        printf("R cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d]", cpu, port, i, size, crc,
+               hf_queue_count(pktdrv_queue));
+
+        if (hf_crc32(buf, size - 4) != crc) {
+            printf(" (CRC32 fail)\n");
+            continue;
+        }
+
+        printf(" (CRC32 pass)\n");
+//        val = hf_send(1, 3000, buf, size, 1);
+//        if (val)
+//            printf("hf_send(): error %d\n", val);
+
     }
 }
 
 
 _Noreturn void worker(void)
 {
-    int8_t buf[BUFFER_SIZE];
-    uint16_t cpu, port, size;
+    int8_t buf[SIZE_BUFFER * SIDE_SOBEL];
+    uint16_t cpu, port, size, recv_messages=0;
     int16_t val;
     uint32_t crc;
     int32_t channel;
@@ -95,12 +107,12 @@ _Noreturn void worker(void)
     uint8_t *img_gauss, *img_sobel;
 //    uint32_t time;
 
-    img_gauss = (uint8_t *) malloc(IMAGE_SIDE * ARRAY_SIZE);
-    img_sobel = (uint8_t *) malloc(IMAGE_SIDE * ARRAY_SIZE);
-    if (img_gauss == NULL || img_sobel == NULL){
-        printf("\nmalloc() failed!\n");
-        for(;;);
-    }
+    img_sobel = (uint8_t *) malloc(SIDE_IMAGE * SIDE_SOBEL);
+//    img_gauss = (uint8_t *) malloc(SIDE_IMAGE * SIDE_GAUSS);
+//    if (img_gauss == NULL || img_sobel == NULL){
+//        printf("\nmalloc() failed!\n");
+//        for(;;);
+//    }
 
 
     if (hf_comm_create(hf_selfid(), 3000, 0))
@@ -113,23 +125,33 @@ _Noreturn void worker(void)
         val = hf_recv(&cpu, &port, buf, &size, channel);
         if (val){
             printf("hf_recv(): error %d\n", val);
-        } else {
-            memcpy(&crc, buf + size - 4, 4);
-            printf("W cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d]", cpu, port, channel, size, crc,
-                   hf_queue_count(pktdrv_queue));
-
-            if (hf_crc32(buf, size - 4) == crc) {
-                printf(" (CRC32 pass)\n");
-                do_sobel(buf, img_sobel, IMAGE_SIDE, ARRAY_SIZE);
-                for (channel = 0; channel < sizeof(img_sobel) - 4; channel++) {
-                    printf("0x%02x ", img_sobel[channel]);
-                }
-                printf("\n");
-            }
-            else {
-                printf(" (CRC32 fail)\n");
-            }
+            continue;
         }
+
+        memcpy(&crc, buf + size - 4, 4);
+        printf("W cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d]", cpu, port, channel, size, crc,
+               hf_queue_count(pktdrv_queue));
+
+        if (hf_crc32(buf, size - 4) != crc) {
+            printf(" (CRC32 fail)\n");
+            continue;
+        }
+        printf(" (CRC32 pass)\n");
+
+        memmove(img_sobel + ((recv_messages % SIDE_SOBEL) * SIZE_BUFFER), buf, sizeof(buf)- 4);
+
+        recv_messages++;
+        printf("recv_messages %d\n", recv_messages);
+
+        if (recv_messages < SIDE_SOBEL) continue;
+        printf("*** do_sobel ***\n");
+
+//        do_sobel((uint8_t *) buf, img_sobel, SIDE_IMAGE, SIDE_MULTIPLE);
+//                for (i = 0; i < sizeof(img_sobel) - 4; i++) {
+//                    printf("S %d %x\n", i, img_sobel[i]);
+//                }
+        printf("\n");
+
     }
 }
 
@@ -183,7 +205,7 @@ _Noreturn void sender(void)
 {
     int32_t i;
     uint32_t crc;
-    int8_t buf[BUFFER_SIZE];
+    int8_t buf[SIZE_BUFFER];
     uint8_t * ptr;
     int16_t val, channel;
 
@@ -204,23 +226,25 @@ _Noreturn void sender(void)
 //        }
 //        crc = hf_crc32((int8_t *)ptr, sizeof(buf) - 4);
 //        memcpy(ptr + BUFFER_SIZE - 4, &crc, 4);
-        val = hf_send(1, 1000, (int8_t *) ptr, BUFFER_SIZE, 1);
+        val = hf_send(1, 1000, (int8_t *) ptr, SIZE_BUFFER, 1);
         printf("sizeof %d\n", sizeof(buf));
         if (val)
             printf("hf_send(): error %d\n", val);
         else
-            ptr = ptr + BUFFER_SIZE - 4;
+            ptr = ptr + SIZE_BUFFER - 4;
     }
 }
 
 
 void app_main(void)
 {
+    printf(" OI\n");
+
     switch (hf_cpuid()) {
         case 0:
             hf_spawn(master, 0, 0, 0, "M", 4096);
         case 1:
             hf_spawn(receiver, 0, 0, 0, "R", 4096);
-            hf_spawn(worker, 0, 0, 0, "W", 4096);
+//            hf_spawn(worker, 0, 0, 0, "W", 4096);
     }
 }

@@ -1,6 +1,10 @@
 //
 // Created by tarsio on 14/06/2020.
 //
+#ifndef HELLFIREOS_APP_H
+#include <hellfire.h>
+#define HELLFIREOS_APP_H
+#endif //HELLFIREOS_APP_H
 
 uint32_t isqrt(uint32_t a);
 uint8_t gaussian(uint8_t buffer[5][5]);
