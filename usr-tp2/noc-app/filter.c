@@ -95,19 +95,12 @@ void do_sobel(uint8_t *input, uint8_t *output, int32_t width, int32_t height){
 //    printf("S %d", input[512]);
 
 	for(i = 0; i < height; i++){
-//        printf("FOR %d height %d i, ", height, i);
 		if (i > 2 && i < height-3){
-//            printf("IF I, ");
 			for(j = 0; j < width-1; j++){
-//                printf("FOR W, ");
 				if (j > 2 && j < width-3){
-//                    printf("IF J, ");
 					for (k = 0; k < 3; k++)
-//                        printf("FOR K, ");
 						for(l = 0; l < 3; l++)
-//                            printf("FOR L, ");
 							image_buf[k][l] = input[(((i + l-1) * width) + (j + k-1))];
-//						    printf("S %d %d", image_buf[k][l], input[(((i + l-1) * width) + (j + k-1))]);
 
 					output[((i * width) + j)] = sobel(image_buf);
 				}else{
@@ -118,4 +111,29 @@ void do_sobel(uint8_t *input, uint8_t *output, int32_t width, int32_t height){
 			output[((i * width) + j)] = 0;
 		}
 	}
+}
+
+
+void do_sobel2(uint8_t *input, uint8_t *output, int32_t width, int32_t height){
+    int32_t i = 0, j = 0, k, l;
+    uint8_t image_buf[3][3];
+//    printf("S %d", input[512]);
+
+    for(i = 0; i < height; i++){
+        if (i > 1 && i < height-2){
+            for(j = 0; j < width-1; j++){
+                if (j > 1 && j < width-2){
+                    for (k = 0; k < 3; k++)
+                        for(l = 0; l < 3; l++)
+                            image_buf[k][l] = input[(((i + l-1) * width) + (j + k-1))];
+
+                    output[((i * width) + j)] = sobel(image_buf);
+                }else{
+                    output[((i * width) + j)] = 0;
+                }
+            }
+        }else{
+            output[((i * width) + j)] = 0;
+        }
+    }
 }
