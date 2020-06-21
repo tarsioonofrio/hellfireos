@@ -8,16 +8,18 @@
 
 
 #define SIDE_IMAGE  256
-#define SIDE_SOBEL  5
-#define SIDE_GAUSS  7
+#define SIDE_SOBEL  7
+#define SIDE_GAUSS  9
 #define SIZE_CRC    4
-#define SIDE_MULTIPLE  1
-#define SIZE_BUFFER SIDE_IMAGE * SIDE_MULTIPLE + SIZE_CRC
+#define SIZE_BUFFER SIDE_IMAGE + SIZE_CRC
 #define TIMEOUT 500
+#define PORT_MASTER 1000
+#define PORT_RECEIVER 2000
+#define PORT_WORKER 3000
+#define PORT_SENDER 4000
 
 _Noreturn void master(void)
 {
-    int32_t i;
     uint32_t crc;
     int8_t buf[SIZE_BUFFER];
     uint8_t * ptr;
@@ -25,7 +27,7 @@ _Noreturn void master(void)
 
     ptr = image;
 
-    if (hf_comm_create(hf_selfid(), 1000, 0))
+    if (hf_comm_create(hf_selfid(), PORT_MASTER, 0))
         panic(0xff);
 
     delay_ms(50);
@@ -36,18 +38,14 @@ _Noreturn void master(void)
     // generate a unique channel number for this CPU
     channel = hf_cpuid();
     while (1){
-//        for (i = 0; i < sizeof(buf) - 4; i++) {
-//            buf[i] = *(ptr++);
-//        }
-        crc = hf_crc32((int8_t *)ptr, sizeof(buf) - 4);
-        memcpy(ptr + SIZE_BUFFER - 4, &crc, 4);
-        val = hf_send(1, 2000, (int8_t *) ptr, SIZE_BUFFER, 1);
+        crc = hf_crc32((int8_t *)ptr, sizeof(buf) - SIZE_CRC);
+        memcpy(ptr + SIZE_BUFFER - SIZE_CRC, &crc, SIZE_CRC);
+        val = hf_send(1, PORT_RECEIVER, (int8_t *) ptr, SIZE_BUFFER, 1);
+        if (val) printf("hf_send(): error %d\n", val);
 //        val = hf_sendack(1, 2000, (int8_t *) ptr, SIZE_BUFFER, 1, TIMEOUT);
-        printf("sizeof %d\n", sizeof(buf));
-//        if (val) printf("hf_send(): error %d\n", val);
-        if (val) printf("sender, hf_sendack(): error %d\n", val);
+//        if (val) printf("sender, hf_sendack(): error %d\n", val);
 
-        ptr = ptr + SIZE_BUFFER - 4;
+        ptr = ptr + SIZE_BUFFER - SIZE_CRC;
         printf("ptr %d\n", ptr);
         delay_ms(10);
     }
@@ -62,7 +60,7 @@ _Noreturn void receiver(void)
     uint32_t crc;
     int32_t i;
 
-    if (hf_comm_create(hf_selfid(), 2000, 0))
+    if (hf_comm_create(hf_selfid(), PORT_RECEIVER, 0))
         panic(0xff);
 
     while (1){
@@ -78,19 +76,21 @@ _Noreturn void receiver(void)
             continue;
         }
 
-        memcpy(&crc, buf + size - 4, 4);
+        memcpy(&crc, buf + size - SIZE_CRC, SIZE_CRC);
         printf("R cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d]", cpu, port, i, size, crc,
                hf_queue_count(pktdrv_queue));
 
-        if (hf_crc32(buf, size - 4) != crc) {
+        if (hf_crc32(buf, size - SIZE_CRC) != crc) {
             printf(" (CRC32 fail)\n");
             continue;
         }
 
         printf(" (CRC32 pass)\n");
-//        val = hf_send(1, 3000, buf, size, 1);
-//        if (val)
-//            printf("hf_send(): error %d\n", val);
+        val = hf_send(1, PORT_WORKER, buf, size, 1);
+        if (val)
+            printf("hf_send(): error %d\n", val);
+
+        delay_ms(10);
 
     }
 }
@@ -98,16 +98,17 @@ _Noreturn void receiver(void)
 
 _Noreturn void worker(void)
 {
-    int8_t buf[SIZE_BUFFER * SIDE_SOBEL];
-    uint16_t cpu, port, size, recv_messages=0;
+    int8_t buf[SIZE_BUFFER];
+    uint16_t cpu, port, size, i, recv_messages=0;
     int16_t val;
     uint32_t crc;
     int32_t channel;
 
-    uint8_t *img_gauss, *img_sobel;
+    uint8_t *img_gauss, *img_sobel, *img;
 //    uint32_t time;
 
     img_sobel = (uint8_t *) malloc(SIDE_IMAGE * SIDE_SOBEL);
+    img = (uint8_t *) malloc(SIDE_IMAGE * SIDE_SOBEL);
 //    img_gauss = (uint8_t *) malloc(SIDE_IMAGE * SIDE_GAUSS);
 //    if (img_gauss == NULL || img_sobel == NULL){
 //        printf("\nmalloc() failed!\n");
@@ -115,7 +116,7 @@ _Noreturn void worker(void)
 //    }
 
 
-    if (hf_comm_create(hf_selfid(), 3000, 0))
+    if (hf_comm_create(hf_selfid(), PORT_WORKER, 0))
         panic(0xff);
 
     while (1){
@@ -128,28 +129,30 @@ _Noreturn void worker(void)
             continue;
         }
 
-        memcpy(&crc, buf + size - 4, 4);
+        memcpy(&crc, buf + size - SIZE_CRC, SIZE_CRC);
         printf("W cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d]", cpu, port, channel, size, crc,
                hf_queue_count(pktdrv_queue));
 
-        if (hf_crc32(buf, size - 4) != crc) {
+        if (hf_crc32(buf, size - SIZE_CRC) != crc) {
             printf(" (CRC32 fail)\n");
             continue;
         }
         printf(" (CRC32 pass)\n");
 
-        memmove(img_sobel + ((recv_messages % SIDE_SOBEL) * SIZE_BUFFER), buf, sizeof(buf)- 4);
+        memmove(img + ((recv_messages % SIDE_SOBEL) * SIZE_BUFFER), buf, sizeof(buf) - SIZE_CRC);
 
         recv_messages++;
         printf("recv_messages %d\n", recv_messages);
 
         if (recv_messages < SIDE_SOBEL) continue;
-        printf("*** do_sobel ***\n");
 
-//        do_sobel((uint8_t *) buf, img_sobel, SIDE_IMAGE, SIDE_MULTIPLE);
-//                for (i = 0; i < sizeof(img_sobel) - 4; i++) {
-//                    printf("S %d %x\n", i, img_sobel[i]);
-//                }
+        do_sobel((uint8_t *) img, img_sobel, SIDE_IMAGE, SIDE_SOBEL);
+        printf("do_sobel\n");
+
+        for (i = 0; i < SIDE_IMAGE * SIDE_SOBEL; i++) {
+//            printf("S %d %x\n", i, img_sobel[i]);
+            printf("0x%x ", img_sobel[i]);
+        }
         printf("\n");
 
     }
@@ -245,6 +248,6 @@ void app_main(void)
             hf_spawn(master, 0, 0, 0, "M", 4096);
         case 1:
             hf_spawn(receiver, 0, 0, 0, "R", 4096);
-//            hf_spawn(worker, 0, 0, 0, "W", 4096);
+            hf_spawn(worker, 0, 0, 0, "W", 4096);
     }
 }
