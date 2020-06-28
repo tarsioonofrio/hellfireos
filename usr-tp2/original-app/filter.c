@@ -108,12 +108,62 @@ void do_sobel(uint8_t *input, uint8_t *output, int32_t width, int32_t height){
 	}
 }
 
+
+void do_sobel1(uint8_t *input, uint8_t *output, int32_t width, int32_t height){
+    int32_t i = 0, j = 0, k, l;
+    uint8_t image_buf[3][3];
+
+    for(i = 0; i < height; i++){
+        if (i > 1 && i < height-2){
+            for(j = 0; j < width; j++){
+                if (j > 1 && j < width-2){
+                    for (k = 0; k < 3; k++)
+                        for(l = 0; l < 3; l++)
+                            image_buf[k][l] = input[(((i + l-1) * width) + (j + k-1))];
+
+                    output[((i * width) + j)] = sobel(image_buf);
+                }else{
+                    output[((i * width) + j)] = 0;
+                }
+            }
+        }else{
+            output[((i * width) + j)] = 0;
+        }
+    }
+}
+
+
+void do_sobel0(uint8_t *input, uint8_t *output, int32_t width, int32_t height){
+    int32_t i = 0, j = 0, k, l;
+    uint8_t image_buf[3][3];
+
+    for(i = 0; i < height; i++){
+        if (i > 0 && i < height-1){
+            for(j = 0; j < width; j++){
+                if (j > 0 && j < width-1){
+                    for (k = 0; k < 3; k++)
+                        for(l = 0; l < 3; l++)
+                            image_buf[k][l] = input[(((i + l-1) * width) + (j + k-1))];
+
+                    output[((i * width) + j)] = sobel(image_buf);
+                }else{
+                    output[((i * width) + j)] = 0;
+                }
+            }
+        }else{
+            output[((i * width) + j)] = 0;
+        }
+    }
+}
+
+
 void task(void){
 	uint32_t i, j, k = 0;
 	uint8_t *img, *img2;
 	uint32_t time;
-	
-	while(1) {
+
+
+    while(1) {
 		img = (uint8_t *) malloc(height * width);
 		img2 = (uint8_t *) malloc(height * width);
 		if (img == NULL || img2 == NULL){
@@ -125,8 +175,9 @@ void task(void){
 
 		time = _readcounter();
 
-		do_gaussian(image, img, width, height);
-		do_sobel(img, img2, width, height);
+//		do_gaussian(image, img, width, height);
+//		do_sobel(img, img2, width, height);
+        do_sobel0(image, img2, width, height);
 
 		time = _readcounter() - time;
 
@@ -136,7 +187,7 @@ void task(void){
 		printf("uint8_t image[] = {\n");
 		for (i = 0; i < height; i++){
 			for (j = 0; j < width; j++){
-				printf("0x%x", img2[i * width + j]);
+				printf("0x%02x", img2[i * width + j]);
 				if ((i < height-1) || (j < width-1)) printf(", ");
 				if ((++k % 16) == 0) printf("\n");
 			}
