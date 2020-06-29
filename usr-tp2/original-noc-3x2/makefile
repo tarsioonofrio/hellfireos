@@ -24,21 +24,7 @@ CORE := 0
 CORE_LIST = 0 1 2 3 4 5
 NOC_FLAGS = -DNOC_INTERCONNECT -DNOC_WIDTH=3 -DNOC_HEIGHT=2 -DNOC_PACKET_SIZE=64 -DNOC_PACKET_SLOTS=64
 
-# define build =
-#     echo "Building image for core $$i.."; \
-#     make noc CORE="$$i" && \
-#     make kernel CORE="$$i" && \
-#     make app CORE="$$i" && \
-#     $(LD) $(LDFLAGS) -T$(LINKER_SCRIPT) -o code$$i.elf *.o && \
-#     $(DUMP) --disassemble --reloc code$$i.elf > code$$i.lst && \
-#     $(DUMP) -h code$$i.elf > code$$i.sec && \
-#     $(DUMP) -s code$$i.elf > code$$i.cnt && \
-#     $(OBJ) -O binary code$$i.elf code$$i.bin && \
-#     $(SIZE) code$$i.elf && \
-#     hexdump -v -e '4/1 "%02x" "\n"' code$$i.bin > code$$i.txt \
-# endef
-
-images: 
+images:
 	make hal
 	make libc
 	for i in $(CORE_LIST) ; do \
@@ -52,8 +38,8 @@ images:
 		$(DUMP) -s code$$i.elf > code$$i.cnt && \
 		$(OBJ) -O binary code$$i.elf code$$i.bin && \
 		$(SIZE) code$$i.elf && \
-		hexdump -v -e '4/1 "%02x" "\n"' code$$i.bin > code$$i.txt ;\
-	done
+		hexdump -v -e '4/1 "%02x" "\n"' code$$i.bin > code$$i.txt \
+	;done
 
 clean:
 	rm -rf *.o *~ *.elf *.bin *.cnt *.lst *.sec *.txt
