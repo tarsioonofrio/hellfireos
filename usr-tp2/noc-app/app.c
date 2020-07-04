@@ -44,8 +44,8 @@ void source(void)
 
     delay_ms(50);
 
-    srand(hf_cpuid());
-    printf("Start\n");
+//    srand(hf_cpuid());
+//    printf("Start\n");
 
     // generate a unique channel number for this CPU
 //    channel = hf_cpuid();
@@ -53,8 +53,8 @@ void source(void)
         if (sended_messages > WIDTH_IMAGE - 1) break;
 
         channel = hf_recvprobe();
-        if (channel < 1) {
-            printf("hf_recvprobe(): error %d\n", val);
+        if (channel < 0) {
+            printf("hf_recvprobe(): error %d\n", channel);
             hf_recv(&cpu, &port, buf, &size, channel);
             continue;
         }
@@ -126,18 +126,25 @@ void worker(void)
         if (recv_messages > WIDTH_IMAGE - 1) break;
 
         // request data to source
-        val = hf_send(0, PORT_SOURCE, buf_dummy, sizeof(buf_dummy), cpuid);
+        val = hf_send(0, PORT_SOURCE, buf_dummy, 0, hf_cpuid());
         if (val) {
             printf("hf_send(): error %d\n", val);
+            delay_ms(5);
             continue;
         }
 
         // receive data from source
         channel = hf_recvprobe();
-        if (channel < 1) {
-            printf("hf_recvprobe(): error %d\n", val);
+        if (channel < 0) {
+//            hf_recv(&cpu, &port, buf, &size, channel);
+            printf("hf_recvprobe(): error %d\n", channel);
             continue;
         }
+//        else if (channel == 1) {
+//            hf_recv(&cpu, &port, buf, &size, channel);
+//            printf("hf_recvprobe(): error %d\n", channel);
+//        }
+
         val = hf_recv(&cpu, &port, buf, &size, channel);
         if (val){
             printf("hf_recv(): error %d\n", val);
@@ -163,7 +170,7 @@ void worker(void)
 
         if (recv_messages < HEIGHT_KERNEL) continue;
 
-//        do_sobel0((uint8_t *)img, img_sobel, WIDTH_IMAGE, HEIGHT_KERNEL);
+        do_sobel0((uint8_t *)img, img_sobel, WIDTH_IMAGE, HEIGHT_KERNEL);
 //        do_gaussian(img_sobel, img_gauss, WIDTH_IMAGE, HEIGHT_KERNEL);
 
 //        for(x = WIDTH_IMAGE * CENTER_LINE; x < WIDTH_IMAGE * (CENTER_LINE + 1); x++){
@@ -180,6 +187,7 @@ void worker(void)
 //            printf("hf_send(): error %d\n", val);
 
 //        delay_ms(5);
+
     }
 
 //    for(x = WIDTH_IMAGE * CENTER_LINE; x < SIZE_PROC_BUFFER - 1; x++){
@@ -260,16 +268,15 @@ void target(void)
 }
 
 
-
 void app_main(void)
 {
     uint8_t i;
     switch (hf_cpuid()) {
         case 0:
-            hf_spawn(source, 0, 0, 0, "s", 2048);
+            hf_spawn(source, 0, 0, 0, "s", 4096);
 //            hf_spawn(target, 0, 0, 0, "w", 2048);
         case 1:
-            hf_spawn(worker, 0, 0, 0, "w", 2048);
+            hf_spawn(worker, 0, 0, 0, "w", 4096);
 //        case 2:
 //            hf_spawn(target, 0, 0, 0, "w", 2048);
     }
