@@ -32,7 +32,7 @@ void source(void)
     uint8_t * ptr;
     int16_t val;
 //    int16_t control[NUM_CPU][2];
-    int16_t control=0;
+    uint32_t sended_messages=0;
 
     uint16_t cpu, port, size;
     int32_t channel;
@@ -50,24 +50,28 @@ void source(void)
     // generate a unique channel number for this CPU
 //    channel = hf_cpuid();
     while (1){
-        if (control > WIDTH_IMAGE - 1) break;
+        if (sended_messages > WIDTH_IMAGE - 1) break;
 
         channel = hf_recvprobe();
         if (channel < 1) {
+            printf("hf_recvprobe(): error %d\n", val);
             hf_recv(&cpu, &port, buf, &size, channel);
             continue;
         }
+
         val = hf_recv(&cpu, &port, buf, &size, channel);
         if (val){
-            printf("hf_send(): error %d\n", val);
+            printf("hf_recv(): error %d\n", val);
             continue;
         }
+
         printf("S cpu %d, port %d, channel %d [free queue: %d] ", cpu, port, channel, size, crc,
                hf_queue_count(pktdrv_queue));
 
         crc = hf_crc32((int8_t *)ptr, sizeof(buf) - SIZE_CRC);
         memcpy(ptr + WIDTH_IMAGE, &crc, SIZE_CRC);
         val = hf_send(cpu, PORT_WORKER, (int8_t *) ptr, SIZE_COMM_BUFFER, cpu);
+
         if (val){
             printf("hf_send(): error %d\n", val);
             continue;
@@ -80,15 +84,14 @@ void source(void)
 //        }
 //        printf("\n");
 
-
-        control++;
+        sended_messages++;
         ptr = ptr + WIDTH_IMAGE;
-        printf("control %d ", control);
+        printf("sended_messages %d ", sended_messages);
         printf("ptr %d", ptr);
         printf("\n");
     }
 
-    printf("\n\nend of processing!\n");
+    printf("\n\nend of processing!\n\n");
 //    panic(0);
     while (1);
 }
@@ -97,11 +100,11 @@ void source(void)
 void worker(void)
 {
     int8_t buf[SIZE_COMM_BUFFER], buf_dummy[1];
-    uint16_t cpu, port, size, cpuid, recv_messages=0;
+    uint16_t cpu, port, size, cpuid;
     int16_t val, x, z = 0;
     uint32_t crc;
     int32_t channel;
-    int16_t control=0;
+    uint32_t control=0, recv_messages=0;
 
     uint8_t *img_gauss, *img_sobel, *img;
 //    uint32_t time;
@@ -120,7 +123,7 @@ void worker(void)
         panic(0xff);
 
     while (1){
-        if (control > WIDTH_IMAGE - 1) break;
+        if (recv_messages > WIDTH_IMAGE - 1) break;
 
         // request data to source
         val = hf_send(0, PORT_SOURCE, buf_dummy, sizeof(buf_dummy), cpuid);
@@ -146,7 +149,7 @@ void worker(void)
                hf_queue_count(pktdrv_queue));
 
         if (hf_crc32(buf, size - SIZE_CRC) != crc) {
-            printf(" (CRC32 fail) ");
+            printf(" (CRC32 fail) \n");
             continue;
         }
         printf(" (CRC32 pass) ");
@@ -156,6 +159,9 @@ void worker(void)
 
         recv_messages++;
         printf("recv_messages %d ", recv_messages);
+        printf("\n");
+        control++;
+        printf("control %d\n", control);
 
         if (recv_messages < HEIGHT_KERNEL) continue;
 
@@ -168,8 +174,6 @@ void worker(void)
 //            if ((++z % 16) == 0) printf("\n");
 //        }
 
-//        printf("control %d\n", control);
-        control++;
 
         // send data to target
 //        val = hf_send(2, PORT_TARGET, img_gauss + CENTER_LINE * SIZE_PROC_BUFFER,
@@ -177,7 +181,6 @@ void worker(void)
 //        if (val)
 //            printf("hf_send(): error %d\n", val);
 
-        printf("\n");
 //        delay_ms(5);
     }
 
@@ -190,7 +193,7 @@ void worker(void)
     free(img_gauss);
     free(img_sobel);
 
-    printf("\n\nend of processing!\n");
+    printf("\n\nend of processing!\n\n");
     panic(0);
 
 }
