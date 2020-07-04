@@ -160,8 +160,6 @@ void worker(void)
         recv_messages++;
         printf("recv_messages %d ", recv_messages);
         printf("\n");
-        control++;
-        printf("control %d\n", control);
 
         if (recv_messages < HEIGHT_KERNEL) continue;
 
@@ -210,7 +208,7 @@ void target(void)
     int32_t channel;
     uint8_t *filter_image;
     uint8_t * ptr;
-    int16_t control=0;
+    uint32_t received_messages=0;
 
     if (hf_comm_create(hf_selfid(), PORT_TARGET, 0))
         panic(0xff);
@@ -220,7 +218,7 @@ void target(void)
     ptr = ptr + WIDTH_IMAGE * CENTER_LINE;
 
     while (1){
-        if (control > WIDTH_IMAGE - 1) break;
+        if (received_messages > WIDTH_IMAGE - 1) break;
 
         channel = hf_recvprobe();
         if (channel < 0) continue;
@@ -244,8 +242,8 @@ void target(void)
 
         ptr = ptr + WIDTH_IMAGE;
 
-        printf("control %d\n", control);
-        control++;
+        printf("control %d\n", received_messages);
+        received_messages++;
     }
 
     printf("\n\nint32_t width = %d, height = %d;\n", width, height);
