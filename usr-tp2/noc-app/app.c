@@ -17,9 +17,8 @@
 #define PORT_SOURCE 2000
 #define PORT_TARGET 3000
 #define PORT_WORKER 4000
-#define CHANNEL_SOURCE 2
-#define CHANNEL_TARGET 3
-#define CHANNEL_WORKER 4
+#define CPU_SOURCE 0
+#define CPU_TARGET 2
 #define NUM_CPU 1
 #define IDX_SENDED 0
 #define IDX_RECEIVED 1
@@ -54,12 +53,12 @@ void source(void)
 
         channel = hf_recvprobe();
         if (channel < 0) {
-            printf("hf_recvprobe(): error %d\n", channel);
+//            printf("hf_recvprobe(): error %d\n", channel);
 //            hf_recv(&cpu, &port, buf, &size, channel);
             continue;
         }
         else if (channel == 0){
-            printf("hf_recvprobe(): error %d\n", channel);
+//            printf("hf_recvprobe(): error %d\n", channel);
             hf_recv(&cpu, &port, buf, &size, channel);
             continue;
         }
@@ -102,13 +101,14 @@ void source(void)
 
     printf("\n\nend of processing!\n\n");
 //    panic(0);
+    free(ptr);
     while (1);
 }
 
 
 void worker(void)
 {
-    int8_t buf[SIZE_COMM_BUFFER], buf_dummy[1];
+    int8_t buffer_source[SIZE_COMM_BUFFER], buf_dummy[1], buffer_target[SIZE_COMM_BUFFER];
     uint16_t cpu, port, size, cpuid;
     int16_t val, x, z = 0;
     uint32_t crc;
@@ -135,12 +135,11 @@ void worker(void)
         if (recv_messages > WIDTH_IMAGE - 1) break;
 
         // request data to source
-        val = hf_send(0, PORT_SOURCE, buf_dummy, 1, 1);
+        val = hf_send(0, PORT_SOURCE, buf_dummy, 1, 1); // cpuid
         if (val) {
             printf("hf_send(): error %d\n", val);
             continue;
         }
-//        delay_ms(1);
 
         // receive data from source
         channel = hf_recvprobe();
@@ -151,28 +150,28 @@ void worker(void)
         }
         else if (channel == 0){
             printf("hf_recvprobe(): error %d\n", channel);
-            hf_recv(&cpu, &port, buf, &size, channel);
+            hf_recv(&cpu, &port, buffer_source, &size, channel);
             continue;
         }
 
-        val = hf_recv(&cpu, &port, buf, &size, channel);
+        val = hf_recv(&cpu, &port, buffer_source, &size, channel);
         if (val){
             printf("hf_recv(): error %d\n", val);
             continue;
         }
 
-        memcpy(&crc, buf + size - SIZE_CRC, SIZE_CRC);
+        memcpy(&crc, buffer_source + size - SIZE_CRC, SIZE_CRC);
         printf("W cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d]", cpu, port, channel, size, crc,
                hf_queue_count(pktdrv_queue));
 
-        if (hf_crc32(buf, size - SIZE_CRC) != crc) {
+        if (hf_crc32(buffer_source, size - SIZE_CRC) != crc) {
             printf(" (CRC32 fail) \n");
             continue;
         }
         printf(" (CRC32 pass) ");
 
         memmove(img, img + WIDTH_IMAGE, SIZE_PROC_BUFFER - WIDTH_IMAGE);
-        memmove(img + (SIZE_PROC_BUFFER - WIDTH_IMAGE), buf, WIDTH_IMAGE);
+        memmove(img + (SIZE_PROC_BUFFER - WIDTH_IMAGE), buffer_source, WIDTH_IMAGE);
 
         recv_messages++;
         printf("recv_messages %d ", recv_messages);
@@ -181,36 +180,27 @@ void worker(void)
         if (recv_messages < HEIGHT_KERNEL) continue;
 
         do_sobel0((uint8_t *)img, img_sobel, WIDTH_IMAGE, HEIGHT_KERNEL);
-//        do_gaussian(img_sobel, img_gauss, WIDTH_IMAGE, HEIGHT_KERNEL);
+        do_gaussian(img_sobel, img_gauss, WIDTH_IMAGE, HEIGHT_KERNEL);
 
-        for(x = WIDTH_IMAGE * CENTER_LINE; x < WIDTH_IMAGE * (CENTER_LINE + 1); x++){
-            printf("0x%02x", img[x]);
-            printf(", ");
-            if ((++z % 16) == 0) printf("\n");
-        }
 
+        memmove(buffer_target, img_gauss + CENTER_LINE * WIDTH_IMAGE, WIDTH_IMAGE);
+        crc = hf_crc32((int8_t *)buffer_target, sizeof(buffer_target) - SIZE_CRC);
+        memcpy(buffer_target + WIDTH_IMAGE, &crc, SIZE_CRC);
 
         // send data to target
-//        val = hf_send(2, PORT_TARGET, img_gauss + CENTER_LINE * SIZE_PROC_BUFFER,
-//                      SIZE_COMM_BUFFER, cpuid);
-//        if (val)
-//            printf("hf_send(): error %d\n", val);
-
-//        delay_ms(5);
+        val = hf_send(2, PORT_TARGET, buffer_target,SIZE_COMM_BUFFER, cpuid);
+        if (val)
+            printf("hf_send(): error %d\n", val);
 
     }
 
-//    for(x = WIDTH_IMAGE * CENTER_LINE; x < SIZE_PROC_BUFFER - 1; x++){
-//        printf("0x%02x", img_gauss[x]);
-//        printf(", ");
-//        if ((++z % 16) == 0) printf("\n");
-//    }
     free(img);
     free(img_gauss);
     free(img_sobel);
 
+    while (1);
     printf("\n\nend of processing!\n\n");
-    panic(0);
+//    panic(0);
 
 }
 
@@ -236,7 +226,7 @@ void target(void)
     ptr = ptr + WIDTH_IMAGE * CENTER_LINE;
 
     while (1){
-        if (received_messages > WIDTH_IMAGE - 1) break;
+        if (received_messages > WIDTH_IMAGE - 5) break;
 
         channel = hf_recvprobe();
         if (channel < 0) continue;
@@ -249,19 +239,21 @@ void target(void)
         }
 
         memcpy(&crc, buf + size - SIZE_CRC, SIZE_CRC);
-//        printf("R cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d]", cpu, port, i, size, crc,
-//               hf_queue_count(pktdrv_queue));
+        printf("T cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d]", cpu, port, channel, size, crc,
+               hf_queue_count(pktdrv_queue));
 
         if (hf_crc32(buf, size - SIZE_CRC) != crc) {
             printf(" (CRC32 fail)\n");
             continue;
         }
+        printf(" (CRC32 pass) ");
+
         memmove(ptr, buf, WIDTH_IMAGE);
 
         ptr = ptr + WIDTH_IMAGE;
 
-        printf("control %d\n", received_messages);
         received_messages++;
+        printf("received_messages %d\n", received_messages);
     }
 
     printf("\n\nint32_t width = %d, height = %d;\n", width, height);
@@ -274,6 +266,8 @@ void target(void)
         }
     }
     printf("};\n");
+    free(filter_image);
+    free(ptr);
 
 }
 
@@ -283,12 +277,12 @@ void app_main(void)
     uint8_t i;
     switch (hf_cpuid()) {
         case 0:
-            hf_spawn(source, 0, 0, 0, "s", 4096);
+            hf_spawn(source, 0, 0, 0, "S", 4096);
 //            hf_spawn(target, 0, 0, 0, "w", 2048);
         case 1:
-            hf_spawn(worker, 0, 0, 0, "w", 4096);
-//        case 2:
-//            hf_spawn(target, 0, 0, 0, "w", 2048);
+            hf_spawn(worker, 0, 0, 0, "W", 4096);
+        case 2:
+            hf_spawn(target, 0, 0, 0, "T", 4096);
     }
 
 //    if (hf_cpuid() == 0)
