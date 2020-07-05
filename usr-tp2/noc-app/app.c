@@ -18,7 +18,7 @@
 #define PORT_TARGET 3000
 #define PORT_WORKER 4000
 #define CPU_SOURCE 0
-#define CPU_TARGET 2
+#define CPU_TARGET 1
 #define NUM_CPU 1
 #define MESSAGE_PER_CPU WIDTH_IMAGE / NUM_CPU
 #define IDX_SENDED 0
@@ -278,7 +278,7 @@ void app_main(void)
     switch (hf_cpuid()) {
         case CPU_SOURCE:
             hf_spawn(source, 0, 0, 0, "S", 4096);
-        case 1:
+        case 3:
             hf_spawn(worker, 0, 0, 0, "W", 4096);
         case CPU_TARGET:
             hf_spawn(target, 0, 0, 0, "T", 4096);
