@@ -42,7 +42,7 @@ void source(void)
     if (hf_comm_create(hf_selfid(), PORT_SOURCE, 0))
         panic(0xff);
 
-    delay_ms(50);
+    delay_ms(10);
 
 //    srand(hf_cpuid());
 //    printf("Start\n");
@@ -55,6 +55,11 @@ void source(void)
         channel = hf_recvprobe();
         if (channel < 0) {
             printf("hf_recvprobe(): error %d\n", channel);
+//            hf_recv(&cpu, &port, buf, &size, channel);
+            continue;
+        }
+        else if (channel == 0){
+            printf("hf_recvprobe(): error %d\n", channel);
             hf_recv(&cpu, &port, buf, &size, channel);
             continue;
         }
@@ -64,13 +69,17 @@ void source(void)
             printf("hf_recv(): error %d\n", val);
             continue;
         }
+        if (cpu == 0) {
+            printf("hf_recv(): error cpu %d\n", cpu);
+            continue;
+        }
 
-        printf("S cpu %d, port %d, channel %d [free queue: %d] ", cpu, port, channel, size, crc,
+        printf("S cpu %d, port %d, channel %d, size %d, [free queue: %d]", cpu, port, channel, size,
                hf_queue_count(pktdrv_queue));
 
         crc = hf_crc32((int8_t *)ptr, sizeof(buf) - SIZE_CRC);
         memcpy(ptr + WIDTH_IMAGE, &crc, SIZE_CRC);
-        val = hf_send(cpu, PORT_WORKER, (int8_t *) ptr, SIZE_COMM_BUFFER, cpu);
+        val = hf_send(cpu, PORT_WORKER, (int8_t *) ptr, SIZE_COMM_BUFFER, 1);
 
         if (val){
             printf("hf_send(): error %d\n", val);
@@ -126,24 +135,25 @@ void worker(void)
         if (recv_messages > WIDTH_IMAGE - 1) break;
 
         // request data to source
-        val = hf_send(0, PORT_SOURCE, buf_dummy, 0, hf_cpuid());
+        val = hf_send(0, PORT_SOURCE, buf_dummy, 1, 1);
         if (val) {
             printf("hf_send(): error %d\n", val);
-            delay_ms(5);
             continue;
         }
+//        delay_ms(1);
 
         // receive data from source
         channel = hf_recvprobe();
         if (channel < 0) {
-//            hf_recv(&cpu, &port, buf, &size, channel);
             printf("hf_recvprobe(): error %d\n", channel);
+//            hf_recv(&cpu, &port, buf, &size, channel);
             continue;
         }
-//        else if (channel == 1) {
-//            hf_recv(&cpu, &port, buf, &size, channel);
-//            printf("hf_recvprobe(): error %d\n", channel);
-//        }
+        else if (channel == 0){
+            printf("hf_recvprobe(): error %d\n", channel);
+            hf_recv(&cpu, &port, buf, &size, channel);
+            continue;
+        }
 
         val = hf_recv(&cpu, &port, buf, &size, channel);
         if (val){
@@ -173,11 +183,11 @@ void worker(void)
         do_sobel0((uint8_t *)img, img_sobel, WIDTH_IMAGE, HEIGHT_KERNEL);
 //        do_gaussian(img_sobel, img_gauss, WIDTH_IMAGE, HEIGHT_KERNEL);
 
-//        for(x = WIDTH_IMAGE * CENTER_LINE; x < WIDTH_IMAGE * (CENTER_LINE + 1); x++){
-//            printf("0x%02x", img[x]);
-//            printf(", ");
-//            if ((++z % 16) == 0) printf("\n");
-//        }
+        for(x = WIDTH_IMAGE * CENTER_LINE; x < WIDTH_IMAGE * (CENTER_LINE + 1); x++){
+            printf("0x%02x", img[x]);
+            printf(", ");
+            if ((++z % 16) == 0) printf("\n");
+        }
 
 
         // send data to target
