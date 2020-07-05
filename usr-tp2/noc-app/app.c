@@ -27,7 +27,7 @@
 
 void source(void)
 {
-    uint32_t crc,  x, z;
+    uint32_t crc;
     int8_t buf[SIZE_COMM_BUFFER];
     uint8_t * ptr[NUM_CPU], i;
     int16_t val;
@@ -49,8 +49,6 @@ void source(void)
 
     delay_ms(10);
 
-//    srand(hf_cpuid());
-//    printf("Start\n");
 
     // generate a unique channel number for this CPU
 //    channel = hf_cpuid();
@@ -91,13 +89,6 @@ void source(void)
             continue;
         }
 
-//        for(x = control * CENTER_LINE; x < WIDTH_IMAGE * (CENTER_LINE + 1); x++){
-//            printf("0x%02x", image[x]);
-//            printf(", ");
-//            if ((++z % 16) == 0) printf("\n");
-//        }
-//        printf("\n");
-
         sended_messages++;
         ptr[cpu - 1] = ptr[cpu - 1] + WIDTH_IMAGE;
         printf("sended_messages %d ", sended_messages);
@@ -113,15 +104,13 @@ void source(void)
 
 void worker(void)
 {
-    int8_t buffer_source[SIZE_COMM_BUFFER], buf_dummy[1], buffer_target[SIZE_COMM_BUFFER];
-    uint16_t cpu, port, size, cpuid;
-    int16_t val, x, z = 0;
-    uint32_t crc;
-    int32_t channel;
-    uint32_t control=0, recv_messages=0;
-
     uint8_t *img_gauss, *img_sobel, *img;
-//    uint32_t time;
+    uint16_t cpu, port, size, cpuid;
+    uint32_t crc, control=0, recv_messages=0;
+    int8_t buffer_source[SIZE_COMM_BUFFER], buf_dummy[1], buffer_target[SIZE_COMM_BUFFER];
+    int16_t val;
+    int32_t channel;
+
     cpuid = hf_cpuid();
 
     img = (uint8_t *) malloc(SIZE_PROC_BUFFER);
@@ -162,6 +151,11 @@ void worker(void)
         val = hf_recv(&cpu, &port, buffer_source, &size, channel);
         if (val){
             printf("hf_recv(): error %d\n", val);
+            continue;
+        }
+
+        if (cpu != CPU_SOURCE) {
+            printf("hf_recv(): error cpu %d\n", cpu);
             continue;
         }
 
@@ -213,13 +207,11 @@ void target(void)
     int8_t buf[SIZE_COMM_BUFFER];
     uint32_t i, j, k = 0;
 
+    uint8_t * filter_image, * ptr;
     uint16_t cpu, port, size;
+    uint32_t crc, received_messages=0;
     int16_t val;
-    uint32_t crc;
     int32_t channel;
-    uint8_t *filter_image;
-    uint8_t * ptr;
-    uint32_t received_messages=0;
 
     if (hf_comm_create(hf_selfid(), PORT_TARGET, 0))
         panic(0xff);
