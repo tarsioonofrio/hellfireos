@@ -99,10 +99,10 @@ void source(void)
         printf("\n");
     }
 
-    printf("\n\nend of processing!\n\n");
-//    panic(0);
     free(ptr);
-    while (1);
+    printf("\n\nend of processing!\n\n");
+    panic(0);
+//    while (1);
 }
 
 
@@ -198,9 +198,10 @@ void worker(void)
     free(img_gauss);
     free(img_sobel);
 
-    while (1);
     printf("\n\nend of processing!\n\n");
-//    panic(0);
+    panic(0);
+
+//    while (1);
 
 }
 
@@ -268,6 +269,7 @@ void target(void)
     printf("};\n");
     free(filter_image);
     free(ptr);
+    panic(0);
 
 }
 
