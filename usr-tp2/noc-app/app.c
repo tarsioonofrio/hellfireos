@@ -129,7 +129,7 @@ void worker(void)
         if (recv_messages > WIDTH_IMAGE - 1) break;
 
         // request data to source
-        val = hf_send(CPU_SOURCE, PORT_SOURCE, buf_dummy, 1, 1); // cpuid
+        val = hf_send(CPU_SOURCE, PORT_SOURCE, buf_dummy, 1, cpuid);
         if (val) {
             printf("hf_send(): error %d\n", val);
             continue;
