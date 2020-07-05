@@ -30,7 +30,7 @@ void source(void)
     int8_t buf[SIZE_COMM_BUFFER];
     uint8_t * ptr;
     int16_t val;
-//    int16_t control[NUM_CPU][2];
+    int16_t control[NUM_CPU][2];
     uint32_t sended_messages=0;
 
     uint16_t cpu, port, size;
@@ -101,8 +101,7 @@ void source(void)
 
     free(ptr);
     printf("\n\nend of processing!\n\n");
-    panic(0);
-//    while (1);
+    while (1);
 }
 
 
@@ -135,7 +134,7 @@ void worker(void)
         if (recv_messages > WIDTH_IMAGE - 1) break;
 
         // request data to source
-        val = hf_send(0, PORT_SOURCE, buf_dummy, 1, 1); // cpuid
+        val = hf_send(CPU_SOURCE, PORT_SOURCE, buf_dummy, 1, 1); // cpuid
         if (val) {
             printf("hf_send(): error %d\n", val);
             continue;
@@ -188,7 +187,7 @@ void worker(void)
         memcpy(buffer_target + WIDTH_IMAGE, &crc, SIZE_CRC);
 
         // send data to target
-        val = hf_send(2, PORT_TARGET, buffer_target,SIZE_COMM_BUFFER, cpuid);
+        val = hf_send(CPU_TARGET, PORT_TARGET, buffer_target,SIZE_COMM_BUFFER, cpuid);
         if (val)
             printf("hf_send(): error %d\n", val);
 
@@ -199,10 +198,7 @@ void worker(void)
     free(img_sobel);
 
     printf("\n\nend of processing!\n\n");
-    panic(0);
-
-//    while (1);
-
+    while (1);
 }
 
 
