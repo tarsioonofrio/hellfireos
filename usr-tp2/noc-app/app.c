@@ -19,7 +19,8 @@
 #define PORT_WORKER 4000
 #define CPU_SOURCE 0
 #define CPU_TARGET 2
-#define NUM_CPU 1
+#define NUM_CPU 3
+#define MESSAGE_PER_CPU WIDTH_IMAGE / NUM_CPU
 #define IDX_SENDED 0
 #define IDX_RECEIVED 1
 
@@ -28,15 +29,20 @@ void source(void)
 {
     uint32_t crc,  x, z;
     int8_t buf[SIZE_COMM_BUFFER];
-    uint8_t * ptr;
+    uint8_t * ptr[NUM_CPU], i;
     int16_t val;
-    int16_t control[NUM_CPU][2];
+//    int16_t control[NUM_CPU];
     uint32_t sended_messages=0;
+    printf("MESSAGE_PER_CPU %d\n", MESSAGE_PER_CPU);
 
     uint16_t cpu, port, size;
     int32_t channel;
 
-    ptr = image;
+    for (i=0; i < NUM_CPU; i++){
+        ptr[i] = &image[MESSAGE_PER_CPU * i];
+    }
+
+//    ptr[0] = image;
 
     if (hf_comm_create(hf_selfid(), PORT_SOURCE, 0))
         panic(0xff);
@@ -76,9 +82,9 @@ void source(void)
         printf("S cpu %d, port %d, channel %d, size %d, [free queue: %d]", cpu, port, channel, size,
                hf_queue_count(pktdrv_queue));
 
-        crc = hf_crc32((int8_t *)ptr, sizeof(buf) - SIZE_CRC);
-        memcpy(ptr + WIDTH_IMAGE, &crc, SIZE_CRC);
-        val = hf_send(cpu, PORT_WORKER, (int8_t *) ptr, SIZE_COMM_BUFFER, 1);
+        crc = hf_crc32((int8_t *)ptr[cpu - 1], sizeof(buf) - SIZE_CRC);
+        memcpy(ptr[cpu - 1] + WIDTH_IMAGE, &crc, SIZE_CRC);
+        val = hf_send(cpu, PORT_WORKER, (int8_t *) ptr[cpu - 1], SIZE_COMM_BUFFER, 1);
 
         if (val){
             printf("hf_send(): error %d\n", val);
@@ -93,9 +99,9 @@ void source(void)
 //        printf("\n");
 
         sended_messages++;
-        ptr = ptr + WIDTH_IMAGE;
+        ptr[cpu - 1] = ptr[cpu - 1] + WIDTH_IMAGE;
         printf("sended_messages %d ", sended_messages);
-        printf("ptr %d", ptr);
+        printf("ptr %d", ptr[cpu - 1]);
         printf("\n");
     }
 
