@@ -276,11 +276,11 @@ void app_main(void)
 {
     uint8_t i;
     switch (hf_cpuid()) {
-        case 0:
+        case CPU_SOURCE:
             hf_spawn(source, 0, 0, 0, "S", 4096);
         case 1:
             hf_spawn(worker, 0, 0, 0, "W", 4096);
-        case 2:
+        case CPU_TARGET:
             hf_spawn(target, 0, 0, 0, "T", 4096);
     }
 
