@@ -19,7 +19,7 @@
 #define PORT_WORKER 4000
 #define CPU_SOURCE 0
 #define CPU_TARGET 2
-#define NUM_CPU 3
+#define NUM_CPU 1
 #define MESSAGE_PER_CPU WIDTH_IMAGE / NUM_CPU
 #define IDX_SENDED 0
 #define IDX_RECEIVED 1
@@ -74,7 +74,7 @@ void source(void)
             printf("hf_recv(): error %d\n", val);
             continue;
         }
-        if (cpu == 0) {
+        if ((cpu == CPU_SOURCE) || (cpu == CPU_TARGET)) {
             printf("hf_recv(): error cpu %d\n", cpu);
             continue;
         }
@@ -179,7 +179,7 @@ void worker(void)
         memmove(img + (SIZE_PROC_BUFFER - WIDTH_IMAGE), buffer_source, WIDTH_IMAGE);
 
         recv_messages++;
-        printf("recv_messages %d ", recv_messages);
+        printf("received_messages %d ", recv_messages);
         printf("\n");
 
         if (recv_messages < HEIGHT_KERNEL) continue;
@@ -240,6 +240,10 @@ void target(void)
             printf("hf_recv(): error %d\n", val);
             continue;
         }
+        if ((cpu == CPU_SOURCE) || (cpu == CPU_TARGET)) {
+            printf("hf_recv(): error cpu %d\n", cpu);
+            continue;
+        }
 
         memcpy(&crc, buf + size - SIZE_CRC, SIZE_CRC);
         printf("T cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d]", cpu, port, channel, size, crc,
@@ -282,7 +286,6 @@ void app_main(void)
     switch (hf_cpuid()) {
         case 0:
             hf_spawn(source, 0, 0, 0, "S", 4096);
-//            hf_spawn(target, 0, 0, 0, "w", 2048);
         case 1:
             hf_spawn(worker, 0, 0, 0, "W", 4096);
         case 2:
