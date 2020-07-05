@@ -36,3 +36,5 @@ usr-tp2/tp2_files/create_bmp
 usr-tp2/tp2_files/create_image
 
 .ipynb_checkpoints/
+
+*.bmp
