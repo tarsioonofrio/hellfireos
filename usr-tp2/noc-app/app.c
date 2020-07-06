@@ -20,26 +20,27 @@
 #define CPU_SOURCE 0
 #define CPU_TARGET 5
 #define NUM_CPU 1
-#define MESSAGE_PER_CPU WIDTH_IMAGE / NUM_CPU
+#define MESSAGE_PER_CPU WIDTH_IMAGE * WIDTH_IMAGE / NUM_CPU
 #define IDX_SENDED 0
 #define IDX_RECEIVED 1
 
 
 void source(void)
 {
-    uint32_t crc;
-    int8_t buf[SIZE_COMM_BUFFER];
     uint8_t * ptr[NUM_CPU], i;
+    uint16_t cpu, port, size;
+    uint32_t crc, sended_messages=0;
+
+    int8_t buf[SIZE_COMM_BUFFER];
     int16_t val;
-//    int16_t control[NUM_CPU];
-    uint32_t sended_messages=0;
+    int32_t channel;
+
     printf("MESSAGE_PER_CPU %d\n", MESSAGE_PER_CPU);
 
-    uint16_t cpu, port, size;
-    int32_t channel;
 
     for (i=0; i < NUM_CPU; i++){
         ptr[i] = &image[MESSAGE_PER_CPU * i];
+        printf("PTR[%d] = &image[%d]\n", i, MESSAGE_PER_CPU * i);
     }
 
 //    ptr[0] = image;
@@ -106,7 +107,8 @@ void worker(void)
 {
     uint8_t *img_gauss, *img_sobel, *img;
     uint16_t cpu, port, size, cpuid;
-    uint32_t crc, control=0, recv_messages=0;
+    uint32_t crc, recv_messages=0;
+
     int8_t buffer_source[SIZE_COMM_BUFFER], buf_dummy[1], buffer_target[SIZE_COMM_BUFFER];
     int16_t val;
     int32_t channel;
@@ -204,12 +206,12 @@ void worker(void)
 
 void target(void)
 {
-    int8_t buf[SIZE_COMM_BUFFER];
-    uint32_t i, j, k = 0;
-
-    uint8_t * filter_image, * ptr;
+    uint8_t * filter_image, * ptr[NUM_CPU];
     uint16_t cpu, port, size;
     uint32_t crc, received_messages=0;
+    uint32_t i, j, k = 0;
+
+    int8_t buf[SIZE_COMM_BUFFER];
     int16_t val;
     int32_t channel;
 
@@ -217,8 +219,14 @@ void target(void)
         panic(0xff);
 
     filter_image = (uint8_t *) malloc(height * width);
-    ptr = filter_image;
-    ptr = ptr + WIDTH_IMAGE * CENTER_LINE;
+    ptr[0] = filter_image;
+    ptr[0] = ptr[0] + WIDTH_IMAGE * CENTER_LINE;
+//    for (i=0; i < NUM_CPU; i++){
+//        ptr[i] = &filter_image[MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE];
+//        printf("PTR[%d] = &image[%d]\n", i, MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE);
+//    }
+
+
 
     while (1){
         if (received_messages > WIDTH_IMAGE - 5) break;
@@ -247,12 +255,14 @@ void target(void)
         }
         printf(" (CRC32 pass) ");
 
-        memmove(ptr, buf, WIDTH_IMAGE);
-
-        ptr = ptr + WIDTH_IMAGE;
+        memmove(ptr[cpu - 1], buf, WIDTH_IMAGE);
 
         received_messages++;
-        printf("received_messages %d\n", received_messages);
+        ptr[cpu - 1] = ptr[cpu - 1] + WIDTH_IMAGE;
+
+        printf("received_messages %d ", received_messages);
+        printf("ptr %d", ptr[cpu - 1]);
+        printf("\n");
     }
 
     printf("\n\nint32_t width = %d, height = %d;\n", width, height);
@@ -279,6 +289,8 @@ void app_main(void)
             hf_spawn(source, 0, 0, 0, "S", 4096);
         case 1:
             hf_spawn(worker, 0, 0, 0, "W", 4096);
+//        case 2:
+//            hf_spawn(worker, 0, 0, 0, "W", 4096);
         case CPU_TARGET:
             hf_spawn(target, 0, 0, 0, "T", 4096);
     }
