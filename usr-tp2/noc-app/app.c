@@ -27,7 +27,9 @@
 
 void source(void)
 {
-    uint8_t * ptr[NUM_CPU], i;
+//    uint8_t * ptr[NUM_CPU];
+    uint8_t i;
+    uint8_t * ptr[3];
     uint16_t cpu, port, size;
     uint32_t crc, sended_messages=0;
 
@@ -38,10 +40,12 @@ void source(void)
     printf("MESSAGE_PER_CPU %d\n", MESSAGE_PER_CPU);
 
 
-    for (i=0; i < NUM_CPU; i++){
-        ptr[i] = &image[MESSAGE_PER_CPU * i];
-        printf("prt[%d] = &image[%d]\n", i, MESSAGE_PER_CPU * i);
-    }
+//    for (i=0; i < NUM_CPU; i++){
+//        ptr[i] = &image[MESSAGE_PER_CPU * i];
+//        printf("prt[%d] = &image[%d]\n", i, MESSAGE_PER_CPU * i);
+//    }
+    ptr[0] = &image[MESSAGE_PER_CPU * 0];
+    ptr[1] = &image[MESSAGE_PER_CPU * 1];
 
 //    ptr[0] = image;
 
@@ -123,8 +127,11 @@ void worker(void)
         for(;;);
     }
 
-    if (hf_comm_create(hf_selfid(), PORT_WORKER, 0))
+    val = hf_comm_create(hf_selfid(), PORT_WORKER, 0);
+    if (val) {
+        printf("hf_comm_create error %d\n", val);
         panic(0xff);
+    }
 
     while (1){
         if (recv_messages > WIDTH_IMAGE - 1) break;
@@ -203,9 +210,12 @@ void worker(void)
 }
 
 
+
 void target(void)
 {
-    uint8_t * filter_image, * ptr[NUM_CPU];
+    uint8_t * filter_image;
+//    uint8_t * ptr[NUM_CPU];
+    uint8_t * ptr[2];
     uint16_t cpu, port, size;
     uint32_t crc, received_messages=0;
     uint32_t i, j, k = 0;
@@ -218,14 +228,17 @@ void target(void)
         panic(0xff);
 
     filter_image = (uint8_t *) malloc(height * width);
+    ptr[0] = &filter_image[0] + MESSAGE_PER_CPU * 0 + CENTER_LINE * WIDTH_IMAGE;
+    ptr[1] = &filter_image[0] + MESSAGE_PER_CPU * 1 + CENTER_LINE * WIDTH_IMAGE;
+
 //    ptr[0] = &filter_image[0] + WIDTH_IMAGE * CENTER_LINE;
 //    ptr[0] = filter_image + WIDTH_IMAGE * CENTER_LINE;
 //    ptr[0] = filter_image;
 //    ptr[0] = ptr[0] + WIDTH_IMAGE * CENTER_LINE;
-    for (i=0; i < NUM_CPU; i++){
-        ptr[i] = &filter_image[0] + MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE;
-        printf("prt[%d] = &filter_image[0] + %d\n", i, MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE);
-    }
+//    for (i=0; i < NUM_CPU; i++){
+//        ptr[i] = &filter_image[0] + MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE;
+//        printf("prt[%d] = &filter_image[0] + %d\n", i, MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE);
+//    }
 
 
 
@@ -289,9 +302,9 @@ void app_main(void)
         case CPU_SOURCE:
             hf_spawn(source, 0, 0, 0, "S", 4096);
         case 1:
-            hf_spawn(worker, 0, 0, 0, "W", 4096);
-//        case 2:
-//            hf_spawn(worker, 0, 0, 0, "W", 4096);
+            hf_spawn(worker, 0, 0, 0, "W1", 4096);
+        case 2:
+            hf_spawn(worker, 0, 0, 0, "W2", 4096);
         case CPU_TARGET:
             hf_spawn(target, 0, 0, 0, "T", 4096);
     }
