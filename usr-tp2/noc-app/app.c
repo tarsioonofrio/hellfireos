@@ -93,7 +93,7 @@ void source(void)
         sended_messages++;
         ptr[cpu - 1] = ptr[cpu - 1] + WIDTH_IMAGE;
         printf("sended_messages %d ", sended_messages);
-        printf("ptr %d", ptr[cpu - 1]);
+        printf("ptr[%d] %d", cpu - 1, ptr[cpu - 1]);
         printf("\n");
     }
 
@@ -219,12 +219,14 @@ void target(void)
         panic(0xff);
 
     filter_image = (uint8_t *) malloc(height * width);
-    ptr[0] = filter_image;
-    ptr[0] = ptr[0] + WIDTH_IMAGE * CENTER_LINE;
-//    for (i=0; i < NUM_CPU; i++){
-//        ptr[i] = &filter_image[MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE];
-//        printf("PTR[%d] = &image[%d]\n", i, MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE);
-//    }
+//    ptr[0] = &filter_image[0] + WIDTH_IMAGE * CENTER_LINE;
+//    ptr[0] = filter_image + WIDTH_IMAGE * CENTER_LINE;
+//    ptr[0] = filter_image;
+//    ptr[0] = ptr[0] + WIDTH_IMAGE * CENTER_LINE;
+    for (i=0; i < NUM_CPU; i++){
+        ptr[i] = &filter_image[0] + MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE;
+        printf("PTR[%d] = &filter_image[0] + %d\n", i, MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE);
+    }
 
 
 
@@ -261,7 +263,7 @@ void target(void)
         ptr[cpu - 1] = ptr[cpu - 1] + WIDTH_IMAGE;
 
         printf("received_messages %d ", received_messages);
-        printf("ptr %d", ptr[cpu - 1]);
+        printf("ptr[%d] %d", cpu - 1, ptr[cpu - 1]);
         printf("\n");
     }
 
