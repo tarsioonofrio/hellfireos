@@ -175,9 +175,9 @@ void task(void){
 
 		time = _readcounter();
 
-//		do_gaussian(image, img, width, height);
-//		do_sobel(img, img2, width, height);
-        do_sobel0(image, img2, width, height);
+		do_gaussian(image, img, width, height);
+		do_sobel(img, img2, width, height);
+//        do_sobel0(image, img2, width, height);
 
 		time = _readcounter() - time;
 
