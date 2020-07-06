@@ -40,7 +40,7 @@ void source(void)
 
     for (i=0; i < NUM_CPU; i++){
         ptr[i] = &image[MESSAGE_PER_CPU * i];
-        printf("PTR[%d] = &image[%d]\n", i, MESSAGE_PER_CPU * i);
+        printf("prt[%d] = &image[%d]\n", i, MESSAGE_PER_CPU * i);
     }
 
 //    ptr[0] = image;
@@ -58,12 +58,11 @@ void source(void)
 
         channel = hf_recvprobe();
         if (channel < 0) {
-//            printf("hf_recvprobe(): error %d\n", channel);
-//            hf_recv(&cpu, &port, buf, &size, channel);
+            printf("hf_recvprobe(): error %d\n", channel);
             continue;
         }
         else if (channel == 0){
-//            printf("hf_recvprobe(): error %d\n", channel);
+            printf("hf_recvprobe(): error %d\n", channel);
             hf_recv(&cpu, &port, buf, &size, channel);
             continue;
         }
@@ -225,7 +224,7 @@ void target(void)
 //    ptr[0] = ptr[0] + WIDTH_IMAGE * CENTER_LINE;
     for (i=0; i < NUM_CPU; i++){
         ptr[i] = &filter_image[0] + MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE;
-        printf("PTR[%d] = &filter_image[0] + %d\n", i, MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE);
+        printf("prt[%d] = &filter_image[0] + %d\n", i, MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE);
     }
 
 
