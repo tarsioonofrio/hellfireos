@@ -18,7 +18,7 @@
 #define PORT_TARGET 3000
 #define PORT_WORKER 4000
 #define CPU_SOURCE 0
-#define CPU_TARGET 1
+#define CPU_TARGET 5
 #define NUM_CPU 1
 #define MESSAGE_PER_CPU WIDTH_IMAGE / NUM_CPU
 #define IDX_SENDED 0
@@ -77,7 +77,7 @@ void source(void)
             continue;
         }
 
-        printf("S cpu %d, port %d, channel %d, size %d, [free queue: %d]", cpu, port, channel, size,
+        printf("S cpu %d, port %d, channel %d, size %d, [free queue: %d] ", cpu, port, channel, size,
                hf_queue_count(pktdrv_queue));
 
         crc = hf_crc32((int8_t *)ptr[cpu - 1], sizeof(buf) - SIZE_CRC);
@@ -160,7 +160,7 @@ void worker(void)
         }
 
         memcpy(&crc, buffer_source + size - SIZE_CRC, SIZE_CRC);
-        printf("W cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d]", cpu, port, channel, size, crc,
+        printf("W cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d] ", cpu, port, channel, size, crc,
                hf_queue_count(pktdrv_queue));
 
         if (hf_crc32(buffer_source, size - SIZE_CRC) != crc) {
@@ -238,7 +238,7 @@ void target(void)
         }
 
         memcpy(&crc, buf + size - SIZE_CRC, SIZE_CRC);
-        printf("T cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d]", cpu, port, channel, size, crc,
+        printf("T cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d] ", cpu, port, channel, size, crc,
                hf_queue_count(pktdrv_queue));
 
         if (hf_crc32(buf, size - SIZE_CRC) != crc) {
@@ -274,16 +274,16 @@ void target(void)
 
 void app_main(void)
 {
-    uint8_t i;
     switch (hf_cpuid()) {
         case CPU_SOURCE:
             hf_spawn(source, 0, 0, 0, "S", 4096);
-        case 3:
+        case 1:
             hf_spawn(worker, 0, 0, 0, "W", 4096);
         case CPU_TARGET:
             hf_spawn(target, 0, 0, 0, "T", 4096);
     }
 
+//    uint8_t i;
 //    if (hf_cpuid() == 0)
 //        hf_spawn(source, 0, 0, 0, "s", 2048);
 //
