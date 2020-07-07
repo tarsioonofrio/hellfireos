@@ -1,0 +1,152 @@
+
+KERNEL: booting...
+===========================================================
+HellfireOS v2.19.03 (4.9.3) [Jul  4 2020, 23:02:11]
+Embedded Systems Group - GSE, PUCRS - [2007 - 2019]
+===========================================================
+
+arch:          mips/plasma
+sys clk:       25000 kHz
+time slice:    10480 us
+heap size:     500000 bytes
+max tasks:     30
+
+HAL: _vm_init()
+HAL: _sched_init()
+HAL: _timer_init()
+HAL: _irq_init()
+HAL: _device_init()
+KERNEL: this is core #2
+KERNEL: NoC queue init, 64 packets
+KERNEL: NoC driver registered
+HAL: _task_init()
+KERNEL: [idle task], id: 0, p:0, c:0, d:0, addr: 10001204, sp: 1000c904, ss: 1024 bytes
+KERNEL: [w], id: 1, p:0, c:0, d:0, addr: 100004e0, sp: 1000d90c, ss: 4096 bytes
+KERNEL: free heap: 485368 bytes
+KERNEL: HellfireOS is up
+T cpu 1, port 4000, channel 0, size 132, crc c48c9d1b [free queue: 64] (CRC32 pass) received_messages 1
+T cpu 1, port 4000, channel 0, size 132, crc 25f47e4d [free queue: 64] (CRC32 pass) received_messages 2
+T cpu 1, port 4000, channel 0, size 132, crc c523ac62 [free queue: 64] (CRC32 pass) received_messages 3
+T cpu 1, port 4000, channel 0, size 132, crc 4be0ebd1 [free queue: 64] (CRC32 pass) received_messages 4
+T cpu 1, port 4000, channel 0, size 132, crc fade7f07 [free queue: 64] (CRC32 pass) received_messages 5
+T cpu 1, port 4000, channel 0, size 132, crc 3fba437e [free queue: 64] (CRC32 pass) received_messages 6
+T cpu 1, port 4000, channel 0, size 132, crc 5a75fa19 [free queue: 64] (CRC32 pass) received_messages 7
+T cpu 1, port 4000, channel 0, size 132, crc e2ee9a9a [free queue: 64] (CRC32 pass) received_messages 8
+T cpu 1, port 4000, channel 0, size 132, crc 4d4825bf [free queue: 64] (CRC32 pass) received_messages 9
+T cpu 1, port 4000, channel 0, size 132, crc 4b6602c3 [free queue: 64] (CRC32 pass) received_messages 10
+T cpu 1, port 4000, channel 0, size 132, crc 3c488b53 [free queue: 64] (CRC32 pass) received_messages 11
+T cpu 1, port 4000, channel 0, size 132, crc 329763e3 [free queue: 64] (CRC32 pass) received_messages 12
+T cpu 1, port 4000, channel 0, size 132, crc 14543c02 [free queue: 64] (CRC32 pass) received_messages 13
+T cpu 1, port 4000, channel 0, size 132, crc a79a989b [free queue: 64] (CRC32 pass) received_messages 14
+T cpu 1, port 4000, channel 0, size 132, crc cd246f1e [free queue: 64] (CRC32 pass) received_messages 15
+T cpu 1, port 4000, channel 0, size 132, crc 8ef89192 [free queue: 64] (CRC32 pass) received_messages 16
+T cpu 1, port 4000, channel 0, size 132, crc 9536013a [free queue: 64] (CRC32 pass) received_messages 17
+T cpu 1, port 4000, channel 0, size 132, crc 31ba862b [free queue: 64] (CRC32 pass) received_messages 18
+T cpu 1, port 4000, channel 0, size 132, crc f9dc11da [free queue: 64] (CRC32 pass) received_messages 19
+T cpu 1, port 4000, channel 0, size 132, crc 0d561a79 [free queue: 64] (CRC32 pass) received_messages 20
+T cpu 1, port 4000, channel 0, size 132, crc 8215315b [free queue: 64] (CRC32 pass) received_messages 21
+T cpu 1, port 4000, channel 0, size 132, crc 3b86b623 [free queue: 64] (CRC32 pass) received_messages 22
+T cpu 1, port 4000, channel 0, size 132, crc 07b002e6 [free queue: 64] (CRC32 pass) received_messages 23
+T cpu 1, port 4000, channel 0, size 132, crc 1a908847 [free queue: 64] (CRC32 pass) received_messages 24
+T cpu 1, port 4000, channel 0, size 132, crc 5423a4a4 [free queue: 64] (CRC32 pass) received_messages 25
+T cpu 1, port 4000, channel 0, size 132, crc 168b70c9 [free queue: 64] (CRC32 pass) received_messages 26
+T cpu 1, port 4000, channel 0, size 132, crc 9c147dae [free queue: 64] (CRC32 pass) received_messages 27
+T cpu 1, port 4000, channel 0, size 132, crc a1567b95 [free queue: 64] (CRC32 pass) received_messages 28
+T cpu 1, port 4000, channel 0, size 132, crc f6d4c912 [free queue: 64] (CRC32 pass) received_messages 29
+T cpu 1, port 4000, channel 0, size 132, crc 1238d8d8 [free queue: 64] (CRC32 pass) received_messages 30
+T cpu 1, port 4000, channel 0, size 132, crc 226fa200 [free queue: 64] (CRC32 pass) received_messages 31
+T cpu 1, port 4000, channel 0, size 132, crc 05e70762 [free queue: 64] (CRC32 pass) received_messages 32
+T cpu 1, port 4000, channel 0, size 132, crc d37761e4 [free queue: 64] (CRC32 pass) received_messages 33
+T cpu 1, port 4000, channel 0, size 132, crc ad610a69 [free queue: 64] (CRC32 pass) received_messages 34
+T cpu 1, port 4000, channel 0, size 132, crc 96d6ade1 [free queue: 64] (CRC32 pass) received_messages 35
+T cpu 1, port 4000, channel 0, size 132, crc f0927639 [free queue: 64] (CRC32 pass) received_messages 36
+T cpu 1, port 4000, channel 0, size 132, crc 1bcd4a93 [free queue: 64] (CRC32 pass) received_messages 37
+T cpu 1, port 4000, channel 0, size 132, crc 1792604b [free queue: 64] (CRC32 pass) received_messages 38
+T cpu 1, port 4000, channel 0, size 132, crc 4757d09b [free queue: 64] (CRC32 pass) received_messages 39
+T cpu 1, port 4000, channel 0, size 132, crc 32243d11 [free queue: 64] (CRC32 pass) received_messages 40
+T cpu 1, port 4000, channel 0, size 132, crc 88c7b28a [free queue: 64] (CRC32 pass) received_messages 41
+T cpu 1, port 4000, channel 0, size 132, crc 6eff368c [free queue: 64] (CRC32 pass) received_messages 42
+T cpu 1, port 4000, channel 0, size 132, crc e9d8d6a5 [free queue: 64] (CRC32 pass) received_messages 43
+T cpu 1, port 4000, channel 0, size 132, crc 4c46f9cf [free queue: 64] (CRC32 pass) received_messages 44
+T cpu 1, port 4000, channel 0, size 132, crc 2289e423 [free queue: 64] (CRC32 pass) received_messages 45
+T cpu 1, port 4000, channel 0, size 132, crc 22edeed1 [free queue: 64] (CRC32 pass) received_messages 46
+T cpu 1, port 4000, channel 0, size 132, crc 676a0ab9 [free queue: 64] (CRC32 pass) received_messages 47
+T cpu 1, port 4000, channel 0, size 132, crc fd79d79b [free queue: 64] (CRC32 pass) received_messages 48
+T cpu 1, port 4000, channel 0, size 132, crc e00d78c2 [free queue: 64] (CRC32 pass) received_messages 49
+T cpu 1, port 4000, channel 0, size 132, crc 2ad229d2 [free queue: 64] (CRC32 pass) received_messages 50
+T cpu 1, port 4000, channel 0, size 132, crc 7051f79d [free queue: 64] (CRC32 pass) received_messages 51
+T cpu 1, port 4000, channel 0, size 132, crc f4ce12d1 [free queue: 64] (CRC32 pass) received_messages 52
+T cpu 1, port 4000, channel 0, size 132, crc 0605e608 [free queue: 64] (CRC32 pass) received_messages 53
+T cpu 1, port 4000, channel 0, size 132, crc 036e1551 [free queue: 64] (CRC32 pass) received_messages 54
+T cpu 1, port 4000, channel 0, size 132, crc 0ce869bf [free queue: 64] (CRC32 pass) received_messages 55
+T cpu 1, port 4000, channel 0, size 132, crc c35f969f [free queue: 64] (CRC32 pass) received_messages 56
+T cpu 1, port 4000, channel 0, size 132, crc 7e7a9123 [free queue: 64] (CRC32 pass) received_messages 57
+T cpu 1, port 4000, channel 0, size 132, crc 4e3e1f98 [free queue: 64] (CRC32 pass) received_messages 58
+T cpu 1, port 4000, channel 0, size 132, crc e94daa93 [free queue: 64] (CRC32 pass) received_messages 59
+T cpu 1, port 4000, channel 0, size 132, crc 930da2b9 [free queue: 64] (CRC32 pass) received_messages 60
+T cpu 1, port 4000, channel 0, size 132, crc a94bba1b [free queue: 64] (CRC32 pass) received_messages 61
+T cpu 1, port 4000, channel 0, size 132, crc bba24a7c [free queue: 64] (CRC32 pass) received_messages 62
+T cpu 1, port 4000, channel 0, size 132, crc 557c92ec [free queue: 64] (CRC32 pass) received_messages 63
+T cpu 1, port 4000, channel 0, size 132, crc 763af1f8 [free queue: 64] (CRC32 pass) received_messages 64
+T cpu 1, port 4000, channel 0, size 132, crc 4d66d796 [free queue: 64] (CRC32 pass) received_messages 65
+T cpu 1, port 4000, channel 0, size 132, crc 92992b3e [free queue: 64] (CRC32 pass) received_messages 66
+T cpu 1, port 4000, channel 0, size 132, crc 42e261e4 [free queue: 64] (CRC32 pass) received_messages 67
+T cpu 1, port 4000, channel 0, size 132, crc 072c71bf [free queue: 64] (CRC32 pass) received_messages 68
+T cpu 1, port 4000, channel 0, size 132, crc 2075884b [free queue: 64] (CRC32 pass) received_messages 69
+T cpu 1, port 4000, channel 0, size 132, crc aa83e469 [free queue: 64] (CRC32 pass) received_messages 70
+T cpu 1, port 4000, channel 0, size 132, crc 85cf917a [free queue: 64] (CRC32 pass) received_messages 71
+T cpu 1, port 4000, channel 0, size 132, crc 5a6e6bff [free queue: 64] (CRC32 pass) received_messages 72
+T cpu 1, port 4000, channel 0, size 132, crc 2b5d6a47 [free queue: 64] (CRC32 pass) received_messages 73
+T cpu 1, port 4000, channel 0, size 132, crc 7c519e43 [free queue: 64] (CRC32 pass) received_messages 74
+T cpu 1, port 4000, channel 0, size 132, crc fd265b5e [free queue: 64] (CRC32 pass) received_messages 75
+T cpu 1, port 4000, channel 0, size 132, crc edb91d1e [free queue: 64] (CRC32 pass) received_messages 76
+T cpu 1, port 4000, channel 0, size 132, crc 01499d4c [free queue: 64] (CRC32 pass) received_messages 77
+T cpu 1, port 4000, channel 0, size 132, crc d03027c7 [free queue: 64] (CRC32 pass) received_messages 78
+T cpu 1, port 4000, channel 0, size 132, crc cfcaa69f [free queue: 64] (CRC32 pass) received_messages 79
+T cpu 1, port 4000, channel 0, size 132, crc 3959a578 [free queue: 64] (CRC32 pass) received_messages 80
+T cpu 1, port 4000, channel 0, size 132, crc e14eb377 [free queue: 64] (CRC32 pass) received_messages 81
+T cpu 1, port 4000, channel 0, size 132, crc 17fbb0de [free queue: 64] (CRC32 pass) received_messages 82
+T cpu 1, port 4000, channel 0, size 132, crc 28ba4ba6 [free queue: 64] (CRC32 pass) received_messages 83
+T cpu 1, port 4000, channel 0, size 132, crc 2fe7a615 [free queue: 64] (CRC32 pass) received_messages 84
+T cpu 1, port 4000, channel 0, size 132, crc f761c885 [free queue: 64] (CRC32 pass) received_messages 85
+T cpu 1, port 4000, channel 0, size 132, crc 68569157 [free queue: 64] (CRC32 pass) received_messages 86
+T cpu 1, port 4000, channel 0, size 132, crc e44bb799 [free queue: 64] (CRC32 pass) received_messages 87
+T cpu 1, port 4000, channel 0, size 132, crc b3b07290 [free queue: 64] (CRC32 pass) received_messages 88
+T cpu 1, port 4000, channel 0, size 132, crc aeb7e5cd [free queue: 64] (CRC32 pass) received_messages 89
+T cpu 1, port 4000, channel 0, size 132, crc 07794d6d [free queue: 64] (CRC32 pass) received_messages 90
+T cpu 1, port 4000, channel 0, size 132, crc 86ef06b1 [free queue: 64] (CRC32 pass) received_messages 91
+T cpu 1, port 4000, channel 0, size 132, crc 211995a2 [free queue: 64] (CRC32 pass) received_messages 92
+T cpu 1, port 4000, channel 0, size 132, crc cc598346 [free queue: 64] (CRC32 pass) received_messages 93
+T cpu 1, port 4000, channel 0, size 132, crc 850e18c8 [free queue: 64] (CRC32 pass) received_messages 94
+T cpu 1, port 4000, channel 0, size 132, crc 7284c15f [free queue: 64] (CRC32 pass) received_messages 95
+T cpu 1, port 4000, channel 0, size 132, crc 314f3b83 [free queue: 64] (CRC32 pass) received_messages 96
+T cpu 1, port 4000, channel 0, size 132, crc fb74100e [free queue: 64] (CRC32 pass) received_messages 97
+T cpu 1, port 4000, channel 0, size 132, crc 8814b7a0 [free queue: 64] (CRC32 pass) received_messages 98
+T cpu 1, port 4000, channel 0, size 132, crc 73e93eaf [free queue: 64] (CRC32 pass) received_messages 99
+T cpu 1, port 4000, channel 0, size 132, crc a712860d [free queue: 64] (CRC32 pass) received_messages 100
+T cpu 1, port 4000, channel 0, size 132, crc 1ed57bb6 [free queue: 64] (CRC32 pass) received_messages 101
+T cpu 1, port 4000, channel 0, size 132, crc ab13179c [free queue: 64] (CRC32 pass) received_messages 102
+T cpu 1, port 4000, channel 0, size 132, crc 777f1d4d [free queue: 64] (CRC32 pass) received_messages 103
+T cpu 1, port 4000, channel 0, size 132, crc 3afa2445 [free queue: 64] (CRC32 pass) received_messages 104
+T cpu 1, port 4000, channel 0, size 132, crc 383b4b71 [free queue: 64] (CRC32 pass) received_messages 105
+T cpu 1, port 4000, channel 0, size 132, crc 9263741b [free queue: 64] (CRC32 pass) received_messages 106
+T cpu 1, port 4000, channel 0, size 132, crc 9c4df447 [free queue: 64] (CRC32 pass) received_messages 107
+T cpu 1, port 4000, channel 0, size 132, crc 72dc1e72 [free queue: 64] (CRC32 pass) received_messages 108
+T cpu 1, port 4000, channel 0, size 132, crc 50d7c585 [free queue: 64] (CRC32 pass) received_messages 109
+T cpu 1, port 4000, channel 0, size 132, crc 7444f8d6 [free queue: 64] (CRC32 pass) received_messages 110
+T cpu 1, port 4000, channel 0, size 132, crc 2755be94 [free queue: 64] (CRC32 pass) received_messages 111
+T cpu 1, port 4000, channel 0, size 132, crc 3375eb6a [free queue: 64] (CRC32 pass) received_messages 112
+T cpu 1, port 4000, channel 0, size 132, crc 4b5ca8e9 [free queue: 64] (CRC32 pass) received_messages 113
+T cpu 1, port 4000, channel 0, size 132, crc a2ec8f2f [free queue: 64] (CRC32 pass) received_messages 114
+T cpu 1, port 4000, channel 0, size 132, crc 65b18acc [free queue: 64] (CRC32 pass) received_messages 115
+T cpu 1, port 4000, channel 0, size 132, crc 764f6096 [free queue: 64] (CRC32 pass) received_messages 116
+T cpu 1, port 4000, channel 0, size 132, crc 0d442f52 [free queue: 64] (CRC32 pass) received_messages 117
+T cpu 1, port 4000, channel 0, size 132, crc 845e1df6 [free queue: 64] (CRC32 pass) received_messages 118
+T cpu 1, port 4000, channel 0, size 132, crc 2d393fe8 [free queue: 64] (CRC32 pass) received_messages 119
+T cpu 1, port 4000, channel 0, size 132, crc 459b697a [free queue: 64] (CRC32 pass) received_messages 120
+T cpu 1, port 4000, channel 0, size 132, crc d7ec722b [free queue: 64] (CRC32 pass) received_messages 121
+T cpu 1, port 4000, channel 0, size 132, crc 04dec379 [free queue: 64] (CRC32 pass) received_messages 122
+T cpu 1, port 4000, channel 0, size 132, crc 38593611 [free queue: 64] (CRC32 pass) received_messages 123
+T cpu 1, port 4000, channel 0, size 132, crc 14915acf [free queue: 64] (CRC32 pass) received_messages 124
+
+
