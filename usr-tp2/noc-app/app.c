@@ -19,35 +19,26 @@
 #define PORT_WORKER 4000
 #define CPU_SOURCE 0
 #define CPU_TARGET 5
-#define NUM_CPU 2
+#define NUM_CPU 1
 #define MESSAGE_PER_CPU WIDTH_IMAGE * WIDTH_IMAGE / NUM_CPU
+#define LINES_PER_CPU WIDTH_IMAGE / NUM_CPU
 #define IDX_SENDED 0
 #define IDX_RECEIVED 1
 
 
 void source(void)
 {
-//    uint8_t * ptr[NUM_CPU];
     uint8_t i;
-    uint8_t * ptr[3];
+    uint8_t * ptr;
     uint16_t cpu, port, size;
     uint32_t crc, sended_messages=0;
 
     int8_t buf[SIZE_COMM_BUFFER];
     int16_t val;
-    int32_t channel;
+    int32_t shift;
 
     printf("cpu %d, name %s, thread %d.\n", hf_cpuid(), hf_selfname(), hf_selfid());
 
-
-//    for (i=0; i < NUM_CPU; i++){
-//        ptr[i] = &image[MESSAGE_PER_CPU * i];
-//        printf("prt[%d] = &image[%d]\n", i, MESSAGE_PER_CPU * i);
-//    }
-//    ptr[0] = &image[MESSAGE_PER_CPU * 0];
-//    ptr[1] = &image[MESSAGE_PER_CPU * 1];
-
-//    ptr[0] = image;
 
     if (hf_comm_create(hf_selfid(), PORT_SOURCE, 0))
         panic(0xff);
@@ -58,20 +49,19 @@ void source(void)
     // generate a unique channel number for this CPU
 //    channel = hf_cpuid();
     while (1){
-        if (sended_messages > WIDTH_IMAGE - 1) break;
+//        if (sended_messages > WIDTH_IMAGE - 1) break;
 
-        channel = hf_recvprobe();
-        if (channel < 0) {
-            printf("hf_recvprobe(): error %d\n", channel);
+        shift = hf_recvprobe();
+        if (shift < 0) {
+            printf("hf_recvprobe(): error %d\n", shift);
             continue;
         }
-        else if (channel == 0){
-            printf("hf_recvprobe(): error %d\n", channel);
-            hf_recv(&cpu, &port, buf, &size, channel);
-            continue;
-        }
-        val = hf_recv(&cpu, &port, buf, &size, channel);
-//        val = hf_recvack(&cpu, &port, buf, &size, 1);
+//        else if (channel == 0){
+//            printf("hf_recvprobe(): error %d\n", channel);
+//            hf_recv(&cpu, &port, buf, &size, channel);
+//            continue;
+//        }
+        val = hf_recv(&cpu, &port, buf, &size, shift);
         if (val){
             printf("hf_recv(): error %d\n", val);
             continue;
@@ -81,14 +71,14 @@ void source(void)
             continue;
         }
 
-        printf("S cpu %d, port %d, channel %d, size %d, [free queue: %d] ", cpu, port, channel, size,
+        printf("S cpu %d, port %d, channel %d, size %d, [free queue: %d] ", cpu, port, shift, size,
                hf_queue_count(pktdrv_queue));
-        ptr[0] = &image[MESSAGE_PER_CPU * cpu + channel];
-        crc = hf_crc32((int8_t *)ptr[0], sizeof(buf) - SIZE_CRC);
+//        ptr = image + MESSAGE_PER_CPU * cpu + channel;
+        ptr = image + shift;
+        crc = hf_crc32((int8_t *)ptr, sizeof(buf) - SIZE_CRC);
 //        crc = hf_crc32((int8_t *)ptr[cpu - 1], sizeof(buf) - SIZE_CRC);
-        memcpy(ptr[cpu - 1] + WIDTH_IMAGE, &crc, SIZE_CRC);
-        val = hf_send(cpu, port, (int8_t *) ptr[cpu - 1], SIZE_COMM_BUFFER, 1);
-//        val = hf_sendack(cpu, port, (int8_t *) ptr[cpu - 1], SIZE_COMM_BUFFER, 1, 500);
+        memcpy(ptr + WIDTH_IMAGE, &crc, SIZE_CRC);
+        val = hf_send(cpu, port, (int8_t *) ptr, SIZE_COMM_BUFFER, 1);
 
         if (val){
             printf("hf_send(): error %d\n", val);
@@ -96,9 +86,7 @@ void source(void)
         }
 
         sended_messages++;
-        ptr[cpu - 1] = ptr[cpu - 1] + WIDTH_IMAGE;
         printf("sended_messages %d ", sended_messages);
-        printf("ptr[%d] %d", cpu - 1, ptr[cpu - 1]);
         printf("\n");
     }
 
@@ -111,7 +99,7 @@ void source(void)
 void worker(void)
 {
     uint8_t *img_gauss, *img_sobel, *img;
-    uint16_t cpu, port, size, cpuid, block;
+    uint16_t cpu, port, size, cpuid, shift_source, shift_target;
     uint32_t crc, recv_messages=0;
 
     int8_t buffer_source[SIZE_COMM_BUFFER], buf_dummy[1], buffer_target[SIZE_COMM_BUFFER];
@@ -119,7 +107,7 @@ void worker(void)
     int32_t channel;
 
     cpuid = hf_cpuid();
-    block = MESSAGE_PER_CPU * (cpuid - 1);
+    shift_source = MESSAGE_PER_CPU * (cpuid - 1);
 
     img = (uint8_t *) malloc(SIZE_PROC_BUFFER);
     img_sobel = (uint8_t *) malloc(SIZE_PROC_BUFFER);
@@ -139,13 +127,12 @@ void worker(void)
     }
 
     while (1){
-        if (recv_messages > WIDTH_IMAGE - 1) break;
+        if (recv_messages > LINES_PER_CPU - 1) break;
 
         // request data to source
-        val = hf_send(CPU_SOURCE, PORT_SOURCE, buf_dummy, 1, block);
-//        val = hf_sendack(CPU_SOURCE, PORT_SOURCE, buf_dummy, 1, 1, 500);
+        val = hf_send(CPU_SOURCE, PORT_SOURCE, buf_dummy, 1, shift_source);
 
-        delay_ms(2);
+        delay_ms(5);
         if (val) {
             printf("hf_send(): error %d\n", val);
             continue;
@@ -190,7 +177,8 @@ void worker(void)
 
         recv_messages++;
         printf("received_messages %d ", recv_messages);
-        block = block + WIDTH_IMAGE;
+        shift_target = shift_source;
+        shift_source = shift_source + WIDTH_IMAGE;
         if (recv_messages < HEIGHT_KERNEL) {
             printf("\n");
             continue;
@@ -207,8 +195,7 @@ void worker(void)
         printf("copy ");
 
         // send data to target
-        val = hf_send(CPU_TARGET, PORT_TARGET, buffer_target,SIZE_COMM_BUFFER, cpuid);
-//        val = hf_sendack(CPU_TARGET, PORT_TARGET, buffer_target,SIZE_COMM_BUFFER, cpuid, 500);
+        val = hf_send(CPU_TARGET, PORT_TARGET, buffer_target,SIZE_COMM_BUFFER, shift_target);
         if (val)
             printf("hf_send(): error %d\n", val);
         printf("send ");
@@ -230,8 +217,7 @@ void worker(void)
 void target(void)
 {
     uint8_t * filter_image;
-//    uint8_t * ptr[NUM_CPU];
-    uint8_t * ptr[2];
+    uint8_t * ptr;
     uint16_t cpu, port, size;
     uint32_t crc, received_messages=0;
     uint32_t i, j, k = 0;
@@ -239,7 +225,7 @@ void target(void)
 
     int8_t buf[SIZE_COMM_BUFFER];
     int16_t val;
-    int32_t channel;
+    int32_t shift;
 
     printf("cpu %d, name %s, thread %d.\n", hf_cpuid(), hf_selfname(), hf_selfid());
 
@@ -247,28 +233,16 @@ void target(void)
         panic(0xff);
 
     filter_image = (uint8_t *) malloc(height * width);
-//    ptr[0] = &filter_image[0] + MESSAGE_PER_CPU * 0 + CENTER_LINE * WIDTH_IMAGE;
-//    ptr[1] = &filter_image[0] + MESSAGE_PER_CPU * 1 + CENTER_LINE * WIDTH_IMAGE;
-
-//    ptr[0] = &filter_image[0] + WIDTH_IMAGE * CENTER_LINE;
-//    ptr[0] = filter_image + WIDTH_IMAGE * CENTER_LINE;
-//    ptr[0] = filter_image;
-//    ptr[0] = ptr[0] + WIDTH_IMAGE * CENTER_LINE;
-    for (i=0; i < NUM_CPU; i++){
-        ptr[i] = &filter_image[0] + MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE;
-        printf("prt[%d] = &filter_image[0] + %d\n", i, MESSAGE_PER_CPU * i + CENTER_LINE * WIDTH_IMAGE);
-    }
-
 
     time = _readcounter();
 
     while (1){
         if (received_messages > WIDTH_IMAGE - 5) break;
 
-        channel = hf_recvprobe();
-        if (channel < 0) continue;
+        shift = hf_recvprobe();
+        if (shift < 0) continue;
 
-        val = hf_recv(&cpu, &port, buf, &size, channel);
+        val = hf_recv(&cpu, &port, buf, &size, shift);
 
         if (val) {
             printf("hf_recv(): error %d\n", val);
@@ -280,7 +254,7 @@ void target(void)
         }
 
         memcpy(&crc, buf + size - SIZE_CRC, SIZE_CRC);
-        printf("T cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d] ", cpu, port, channel, size, crc,
+        printf("T cpu %d, port %d, channel %d, size %d, crc %08x [free queue: %d] ", cpu, port, shift, size, crc,
                hf_queue_count(pktdrv_queue));
 
         if (hf_crc32(buf, size - SIZE_CRC) != crc) {
@@ -289,13 +263,12 @@ void target(void)
         }
         printf(" (CRC32 pass) ");
 
-        memmove(ptr[cpu - 1], buf, WIDTH_IMAGE);
+        ptr = filter_image + shift;
+        memmove(ptr, buf, WIDTH_IMAGE);
 
         received_messages++;
-        ptr[cpu - 1] = ptr[cpu - 1] + WIDTH_IMAGE;
 
         printf("received_messages %d ", received_messages);
-        printf("ptr[%d] %d", cpu - 1, ptr[cpu - 1]);
         printf("\n");
     }
 
@@ -341,8 +314,12 @@ void app_main(void)
             hf_spawn(source, 0, 0, 0, "S", 4096);
         case 1:
             hf_spawn(worker, 0, 0, 0, "W1", 4096);
-        case 2:
-            hf_spawn(worker, 0, 0, 0, "W2", 4096);
+//        case 2:
+//            hf_spawn(worker, 0, 0, 0, "W2", 4096);
+//        case 3:
+//            hf_spawn(worker, 0, 0, 0, "W3", 4096);
+//        case 4:
+//            hf_spawn(worker, 0, 0, 0, "W4", 4096);
         case CPU_TARGET:
             hf_spawn(target, 0, 0, 0, "T", 4096);
     }
