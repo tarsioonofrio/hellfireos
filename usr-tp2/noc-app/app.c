@@ -19,7 +19,7 @@
 #define PORT_WORKER 4000
 #define CPU_SOURCE 0
 #define CPU_TARGET 5
-#define NUM_CPU 1
+#define NUM_CPU 4
 #define MESSAGE_PER_CPU WIDTH_IMAGE * WIDTH_IMAGE / NUM_CPU
 #define LINES_PER_CPU WIDTH_IMAGE / NUM_CPU
 #define IDX_SENDED 0
@@ -132,7 +132,7 @@ void worker(void)
         // request data to source
         val = hf_send(CPU_SOURCE, PORT_SOURCE, buf_dummy, 1, shift_source);
 
-        delay_ms(5);
+        delay_ms(NUM_CPU * 3);
         if (val) {
             printf("hf_send(): error %d\n", val);
             continue;
@@ -314,14 +314,14 @@ void app_main(void)
             hf_spawn(source, 0, 0, 0, "S", 4096);
         case 1:
             hf_spawn(worker, 0, 0, 0, "W1", 4096);
-//        case 2:
-//            hf_spawn(worker, 0, 0, 0, "W2", 4096);
-//        case 3:
-//            hf_spawn(worker, 0, 0, 0, "W3", 4096);
-//        case 4:
-//            hf_spawn(worker, 0, 0, 0, "W4", 4096);
-        case CPU_TARGET:
-            hf_spawn(target, 0, 0, 0, "T", 4096);
+        case 2:
+            hf_spawn(worker, 0, 0, 0, "W2", 4096);
+        case 3:
+            hf_spawn(worker, 0, 0, 0, "W3", 4096);
+        case 4:
+            hf_spawn(worker, 0, 0, 0, "W4", 4096);
+//        case CPU_TARGET:
+//            hf_spawn(target, 0, 0, 0, "T", 4096);
     }
 
 //    uint8_t i;
