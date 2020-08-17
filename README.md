@@ -1,4 +1,8 @@
-# HellfireOS Realtime Operating System
+# Distributed and parallel image processing
+
+Please see the [proposal](tp2.pdf), [report](tp2-Relatório.pdf) or [presentation](tp2-Apresentação.pdf) for all the details.
+
+## HellfireOS Realtime Operating System
 
 ---
 ### The operating system structure is organized as follows:

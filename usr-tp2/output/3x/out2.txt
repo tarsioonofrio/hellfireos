@@ -1,0 +1,93 @@
+
+KERNEL: booting...
+===========================================================
+HellfireOS v2.19.03 (4.9.3) [Jul  7 2020, 16:17:23]
+Embedded Systems Group - GSE, PUCRS - [2007 - 2019]
+===========================================================
+
+arch:          mips/plasma
+sys clk:       25000 kHz
+time slice:    10480 us
+heap size:     500000 bytes
+max tasks:     30
+
+HAL: _vm_init()
+HAL: _sched_init()
+HAL: _timer_init()
+HAL: _irq_init()
+HAL: _device_init()
+KERNEL: this is core #2
+KERNEL: NoC queue init, 64 packets
+KERNEL: NoC driver registered
+HAL: _task_init()
+KERNEL: [idle task], id: 0, p:0, c:0, d:0, addr: 10001384, sp: 1000cb34, ss: 1024 bytes
+KERNEL: [W2], id: 1, p:0, c:0, d:0, addr: 100004b4, sp: 1000db3c, ss: 4096 bytes
+KERNEL: [W3], id: 2, p:0, c:0, d:0, addr: 100004b4, sp: 1000eb44, ss: 4096 bytes
+KERNEL: [T], id: 3, p:0, c:0, d:0, addr: 100008e0, sp: 1000fb4c, ss: 4096 bytes
+KERNEL: free heap: 477160 bytes
+KERNEL: HellfireOS is up
+cpu 2, name W2, thread 1.
+W2: cpu 0, port 2000, channel 1, size 132, crc da9b8a2d [free queue: 64]  (CRC32 pass) received_messages 1 
+W2: cpu 0, port 2000, channel 1, size 132, crc 5b867b12 [free queue: 64]  (CRC32 pass) received_messages 2 
+cpu 2, name W3, thread 2.
+cpu 2, name T, thread 3.
+W2: cpu 0, port 2000, channel 1, size 132, crc bf837de4 [free queue: 62]  (CRC32 pass) received_messages 3 
+W3: cpu 0, port 2000, channel 1, size 132, crc da9b8a2d [free queue: 64]  (CRC32 pass) received_messages 1 
+W2: cpu 0, port 2000, channel 1, size 132, crc 0a433866 [free queue: 64]  (CRC32 pass) received_messages 4 
+W3: cpu 0, port 2000, channel 1, size 132, crc 5b867b12 [free queue: 64]  (CRC32 pass) received_messages 2 
+W2: cpu 0, port 2000, channel 1, size 132, crc 0411f8ef [free queue: 62]  (CRC32 pass) received_messages 5 W3: cpu 0, port 2000, channel 1, size 132, crc bf837de4 [free queue: 64]  (CRC32 pass) received_messages 3 
+W3: cpu 0, port 2000, channel 1, size 132, crc 0a433866 [free queue: 64]  (CRC32 pass) received_messages 4 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc 983ca0df [free queue: 62]  (CRC32 pass) received_messages 6 W3: cpu 0, port 2000, channel 1, size 132, crc 0411f8ef [free queue: 64]  (CRC32 pass) received_messages 5 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc 2bbeeab0 [free queue: 62]  (CRC32 pass) received_messages 7 W3: cpu 0, port 2000, channel 1, size 132, crc 983ca0df [free queue: 64]  (CRC32 pass) received_messages 6 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc 34486839 [free queue: 62]  (CRC32 pass) received_messages 8 W3: cpu 0, port 2000, channel 1, size 132, crc 2bbeeab0 [free queue: 64]  (CRC32 pass) received_messages 7 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc cd723191 [free queue: 62]  (CRC32 pass) received_messages 9 W3: cpu 0, port 2000, channel 1, size 132, crc 34486839 [free queue: 64]  (CRC32 pass) received_messages 8 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc e5309528 [free queue: 62]  (CRC32 pass) received_messages 10 W3: cpu 0, port 2000, channel 1, size 132, crc cd723191 [free queue: 64]  (CRC32 pass) received_messages 9 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc c8dac2f5 [free queue: 62]  (CRC32 pass) received_messages 11 W3: cpu 0, port 2000, channel 1, size 132, crc e5309528 [free queue: 64]  (CRC32 pass) received_messages 10 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc 3f070a7e [free queue: 62]  (CRC32 pass) received_messages 12 W3: cpu 0, port 2000, channel 1, size 132, crc c8dac2f5 [free queue: 64]  (CRC32 pass) received_messages 11 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc 75f8b425 [free queue: 62]  (CRC32 pass) received_messages 13 W3: cpu 0, port 2000, channel 1, size 132, crc 3f070a7e [free queue: 64]  (CRC32 pass) received_messages 12 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc eac8c6b8 [free queue: 62]  (CRC32 pass) received_messages 14 W3: cpu 0, port 2000, channel 1, size 132, crc 75f8b425 [free queue: 64]  (CRC32 pass) received_messages 13 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc 427926b8 [free queue: 62]  (CRC32 pass) received_messages 15 W3: cpu 0, port 2000, channel 1, size 132, crc eac8c6b8 [free queue: 64]  (CRC32 pass) received_messages 14 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc b4c68722 [free queue: 62]  (CRC32 pass) received_messages 16 W3: cpu 0, port 2000, channel 1, size 132, crc 427926b8 [free queue: 64]  (CRC32 pass) received_messages 15 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc d8bd3eeb [free queue: 62]  (CRC32 pass) received_messages 17 W3: cpu 0, port 2000, channel 1, size 132, crc b4c68722 [free queue: 64]  (CRC32 pass) received_messages 16 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc 441a2cd1 [free queue: 62]  (CRC32 pass) received_messages 18 W3: cpu 0, port 2000, channel 1, size 132, crc d8bd3eeb [free queue: 64]  (CRC32 pass) received_messages 17 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc 850f4d6c [free queue: 62]  (CRC32 pass) received_messages 19 W3: cpu 0, port 2000, channel 1, size 132, crc 441a2cd1 [free queue: 64]  (CRC32 pass) received_messages 18 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc 3a3517d6 [free queue: 62]  (CRC32 pass) received_messages 20 W3: cpu 0, port 2000, channel 1, size 132, crc 850f4d6c [free queue: 64]  (CRC32 pass) received_messages 19 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc 56aba8d2 [free queue: 62]  (CRC32 pass) received_messages 21 W3: cpu 0, port 2000, channel 1, size 132, crc 3a3517d6 [free queue: 64]  (CRC32 pass) received_messages 20 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc e296b374 [free queue: 62]  (CRC32 pass) received_messages 22 W3: cpu 0, port 2000, channel 1, size 132, crc 56aba8d2 [free queue: 64]  (CRC32 pass) received_messages 21 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc 638271f6 [free queue: 62]  (CRC32 pass) received_messages 23 W3: cpu 0, port 2000, channel 1, size 132, crc e296b374 [free queue: 64]  (CRC32 pass) received_messages 22 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc ad9f0b33 [free queue: 62]  (CRC32 pass) received_messages 24 W3: cpu 0, port 2000, channel 1, size 132, crc 638271f6 [free queue: 64]  (CRC32 pass) received_messages 23 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc a2ccdd82 [free queue: 62]  (CRC32 pass) received_messages 25 W3: cpu 0, port 2000, channel 1, size 132, crc ad9f0b33 [free queue: 64]  (CRC32 pass) received_messages 24 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc 57ec790d [free queue: 62]  (CRC32 pass) received_messages 26 W3: cpu 0, port 2000, channel 1, size 132, crc a2ccdd82 [free queue: 64]  (CRC32 pass) received_messages 25 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc 4dc3d804 [free queue: 62]  (CRC32 pass) received_messages 27 W3: cpu 0, port 2000, channel 1, size 132, crc 57ec790d [free queue: 64]  (CRC32 pass) received_messages 26 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc dcad3b98 [free queue: 62]  (CRC32 pass) received_messages 28 W3: cpu 0, port 2000, channel 1, size 132, crc 4dc3d804 [free queue: 64]  (CRC32 pass) received_messages 27 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc d0b3bf96 [free queue: 62]  (CRC32 pass) received_messages 29 W3: cpu 0, port 2000, channel 1, size 132, crc dcad3b98 [free queue: 64]  (CRC32 pass) received_messages 28 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc fe0cf7f8 [free queue: 62]  (CRC32 pass) received_messages 30 W3: cpu 0, port 2000, channel 1, size 132, crc d0b3bf96 [free queue: 64]  (CRC32 pass) received_messages 29 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc f800a534 [free queue: 62]  (CRC32 pass) received_messages 31 W3: cpu 0, port 2000, channel 1, size 132, crc fe0cf7f8 [free queue: 64]  (CRC32 pass) received_messages 30 process copy send 
+process copy send 
+W2: cpu 0, port 2000, channel 1, size 132, crc 141a0783 [free queue: 62]  (CRC32 pass) received_messages 32 W3: cpu 0, port 2000, channel 1, size 132, crc f800a534 [free queue: 64]  (CRC32 pass) received_messages 31 process copy process copy 
